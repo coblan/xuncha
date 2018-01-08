@@ -238,13 +238,43 @@ var PolygonGroupController = exports.PolygonGroupController = function () {
 
 var polygon_multi_btn_panel = exports.polygon_multi_btn_panel = {
     props: ['crt_row'],
-    template: '<div style="float: right;">\n                <button @click="new_row()">\u65B0\u5EFA</button>\n                <div>\n                <div>\n                    <label for="">\u540D\u5B57</label>\n                    <input type="text" v-model="crt_row.name"/>\n                </div>\n                <div>\n                     <label for="">\u63CF\u8FF0</label>\n                    <textarea name="" id="" cols="30" rows="10" v-model="crt_row.desp"></textarea>\n                </div>\n                <button @click="edit_poly()">\u7F16\u8F91\u591A\u8FB9\u5F62</button>\n                <button @click="close_poly()">\u5173\u95ED\u7F16\u8F91</button>\n                </div>\n     </div>',
+    data: function data() {
+
+        return {
+            editing: false
+        };
+    },
+    template: '<div style="float: right;">\n                <button v-show="!editing" @click="start_edit()">\u7F16\u8F91</button>\n                <button v-show="editing" @click="editing =false">\u4FDD\u5B58</button>\n                <button v-show="editing" @click="fallback()">\u53D6\u6D88</button>\n                <button v-show="!editing" @click="new_row()">\u65B0\u5EFA</button>\n\n                <button v-show="!editing" @click="remove()">\u79FB\u9664</button>\n                <button v-show="!editing" @click="del()">\u5220\u9664</button>\n                <div>\n                <div>\n                    <label for="">\u540D\u5B57</label>\n                    <span v-if="!editing" v-text="crt_row.name"></span>\n                    <input v-else type="text" v-model="crt_row.name"/>\n                </div>\n                <div>\n                     <label for="">\u63CF\u8FF0</label>\n                     <span v-if="!editing" v-text="crt_row.desp"></span>\n                    <textarea v-else name="" id="" cols="30" rows="10" v-model="crt_row.desp"></textarea>\n                </div>\n                <button v-show="editing" @click="edit_poly()">\u7F16\u8F91\u591A\u8FB9\u5F62</button>\n                <button v-show="editing" @click="close_poly()">\u5173\u95ED\u7F16\u8F91</button>\n                </div>\n     </div>',
 
     methods: {
         new_row: function new_row() {
             this.$emit('new_row');
+            this.editing = true;
         },
-        create: function create() {
+        start_edit: function start_edit() {
+            this.editing = true;
+            this.fallback_cache = {
+                name: this.crt_row.name,
+                desp: this.crt_row.desp,
+                oldpath: ex.map(this.crt_row.bounding, function (pos) {
+                    return [pos.lng, pos.lat];
+                })
+            };
+        },
+        fallback: function fallback() {
+            //ex.assign(this.crt_row,this.fallback_cache)
+            this.crt_row.name = this.fallback_cache.name;
+            this.crt_row.desp = this.fallback_cache.desp;
+
+            // 因为高德的Polygon直接操作opiotns设置的array属性，
+            // bounding 与 poly_bounding 的数据应该一致，所以有下面两行
+            this.crt_row.bounding = this.fallback_cache.oldpath;
+            this.crt_row.poly_bounding.setPath(this.crt_row.bounding);
+
+            this.close_poly();
+            this.editing = false;
+        },
+        _create_poly: function _create_poly() {
             var self = this;
             drawer.create_polygon(function (polygon) {
                 var poly_obj = drawer.insert_polygon(polygon);
@@ -255,7 +285,7 @@ var polygon_multi_btn_panel = exports.polygon_multi_btn_panel = {
         edit_poly: function edit_poly() {
             var self = this;
             if (!this.crt_row.poly_bounding) {
-                self.create();
+                self._create_poly();
             } else {
                 var poly_obj = this.crt_row.poly_bounding;
                 drawer.edit_polygon(poly_obj);

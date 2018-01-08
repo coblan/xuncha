@@ -83,11 +83,10 @@
     <div class="flex">
         <ul class="nav nav-tabs tabs flex-grow">
             <li v-for="tab in tabs" :class="{'active':crt_tab==tab.name}"><a :href="item_link(tab.name)" v-text="tab.label" ></a></li>
-
         </ul>
 
-        <com-form-btn :submit="submit" :del_row="del_row" :cancel="cancel">
-        </com-form-btn>
+        <!--<com-form-btn :submit="submit" :del_row="del_row" :cancel="cancel">-->
+        <!--</com-form-btn>-->
 
     </div>
 
