@@ -9,7 +9,7 @@ from .models import BlockPolygon,BlockGroup
 from django.contrib.gis.geos import Polygon
 import json
 from .polygon import dict2poly,poly2dict
-
+from helpers.director.container import evalue_container
 class BlockPolygonTablePage(TablePage):
     class BlockPolygonTable(ModelTable):
         model=BlockPolygon
@@ -119,6 +119,17 @@ class BlockGroupFormPage(TabGroup):
     tabs=[{'name':'blockgroup_normal','label':'分组信息','page_cls':BlockGroupFormPage_normal},
           {'name':'blockgroup_map','label':'地图编辑','page_cls':BlockGroupFormPage_map}
           ]
+    
+    def __init__(self, request):
+        self.pk = request.GET.get('pk')
+        super(self.__class__,self).__init__(request)
+        
+    
+    def get_tabs(self):
+        if not self.pk:
+            return evalue_container( [self.tabs[0],])
+        else:
+            return super(self.__class__,self).get_tabs()
     
         
 

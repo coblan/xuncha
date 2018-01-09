@@ -189,18 +189,11 @@ var PolygonGroupController = exports.PolygonGroupController = function () {
                 map.setFitView();
             });
         }
-        //insert(polygon_row){
-        //    var self=this
-        //    var poly_bounding = drawer.insert_polygon(polygon_row.bounding)
-        //    polygon_row.poly_bounding = poly_bounding
-        //
-        //    poly_bounding.on('click',function(e){
-        //        self.set_crt_polyon_row(polygon_row)
-        //    })
-        //
-        //    this.items.push(polygon_row)
-        //}
-
+    }, {
+        key: 'on_map_click',
+        value: function on_map_click(callback) {
+            this.map_click_callback = callback;
+        }
     }, {
         key: 'new_row',
         value: function new_row() {
@@ -277,6 +270,11 @@ var polygon_multi_btn_panel = exports.polygon_multi_btn_panel = {
         controller.on_click(function (row) {
             if (!self.editing) {
                 controller.set_crt_polyon_row(row);
+            }
+        });
+        controller.on_map_click(function () {
+            if (!self.editing) {
+                controller.set_crt_polyon_row({});
             }
         });
     },
