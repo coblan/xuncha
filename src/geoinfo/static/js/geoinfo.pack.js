@@ -154,6 +154,8 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+__webpack_require__(3);
+
 var PolygonGroupController = exports.PolygonGroupController = function () {
     function PolygonGroupController() {
         _classCallCheck(this, PolygonGroupController);
@@ -205,31 +207,55 @@ var PolygonGroupController = exports.PolygonGroupController = function () {
             var row = {
                 name: '未命名',
                 desp: '描述',
-                bounding: null
+                bounding: null,
+                group: window.row.pk,
+                _class: "geoinfo.blockpolygon"
             };
             this.items.push(row);
-            this.crt_row = row;
+            this.set_crt_polyon_row(row);
         }
     }, {
         key: 'add_poly_2_row',
         value: function add_poly_2_row(row, poly) {
             var self = this;
-            row.poly_bounding = poly;
-            poly.on('click', function () {
-                self.set_crt_polyon_row(row);
+            row.poly = poly;
+
+            //polygon_map[row]= poly
+            poly.row = row;
+            poly.on('click', function (e) {
+                //self.set_crt_polyon_row(this.row)
+                if (self.click_callback) {
+                    self.click_callback(this.row);
+                }
             });
+        }
+    }, {
+        key: 'on_click',
+        value: function on_click(callback) {
+            this.click_callback = callback;
         }
     }, {
         key: 'set_crt_polyon_row',
         value: function set_crt_polyon_row(polygon_row) {
 
-            if (this.crt_row != polygon_row) {
-                if (this.crt_row.poly_bounding) {
-                    this.crt_row.poly_bounding.setOptions({ fillColor: 'black' });
-                }
-                this.crt_row = polygon_row;
-                this.crt_row.poly_bounding.setOptions({ fillColor: 'red' });
+            //if( this.crt_row != polygon_row){
+            if (this.crt_row.poly) {
+                this.crt_row.poly.setOptions({
+                    strokeWeight: 1,
+                    strokeColor: "#000000",
+                    fillColor: "#f5deb3"
+                });
             }
+            this.crt_row = polygon_row;
+            if (this.crt_row.poly) {
+                this.crt_row.poly.setOptions({
+                    fillColor: 'red',
+                    strokeWeight: 3,
+                    strokeColor: "#0000ff"
+                });
+            }
+
+            //}
         }
     }]);
 
@@ -244,9 +270,21 @@ var polygon_multi_btn_panel = exports.polygon_multi_btn_panel = {
             editing: false
         };
     },
-    template: '<div style="float: right;">\n                <button v-show="!editing" @click="start_edit()">\u7F16\u8F91</button>\n                <button v-show="editing" @click="editing =false">\u4FDD\u5B58</button>\n                <button v-show="editing" @click="fallback()">\u53D6\u6D88</button>\n                <button v-show="!editing" @click="new_row()">\u65B0\u5EFA</button>\n\n                <button v-show="!editing" @click="remove()">\u79FB\u9664</button>\n                <button v-show="!editing" @click="del()">\u5220\u9664</button>\n                <div>\n                <div>\n                    <label for="">\u540D\u5B57</label>\n                    <span v-if="!editing" v-text="crt_row.name"></span>\n                    <input v-else type="text" v-model="crt_row.name"/>\n                </div>\n                <div>\n                     <label for="">\u63CF\u8FF0</label>\n                     <span v-if="!editing" v-text="crt_row.desp"></span>\n                    <textarea v-else name="" id="" cols="30" rows="10" v-model="crt_row.desp"></textarea>\n                </div>\n                <button v-show="editing" @click="edit_poly()">\u7F16\u8F91\u591A\u8FB9\u5F62</button>\n                <button v-show="editing" @click="close_poly()">\u5173\u95ED\u7F16\u8F91</button>\n                </div>\n     </div>',
+    template: '<div style="float: right;">\n                <button v-show="!editing && !is_empty(crt_row)" @click="start_edit()">\u7F16\u8F91</button>\n                <button v-show="editing" @click="save()">\u4FDD\u5B58</button>\n                <button v-show="editing" @click="fallback()">\u53D6\u6D88</button>\n                <button v-show="!editing" @click="new_row()">\u65B0\u5EFA</button>\n\n                <button v-show="!editing && !is_empty(crt_row)" @click="remove()">\u79FB\u9664</button>\n                <button v-show="!editing && !is_empty(crt_row)" @click="del()">\u5220\u9664</button>\n                <div class="hr"></div>\n                <div>\n                    <div>\n                        <label for="">\u540D\u5B57</label>\n                        <span v-if="!editing" v-text="crt_row.name"></span>\n                        <input v-else type="text" v-model="crt_row.name"/>\n                    </div>\n                    <div>\n                         <label for="">\u63CF\u8FF0</label>\n                         <span v-if="!editing" v-text="crt_row.desp"></span>\n                        <textarea v-else  rows="10" v-model="crt_row.desp"></textarea>\n                    </div>\n                    <button v-show="editing" @click="edit_poly()">\u7F16\u8F91\u591A\u8FB9\u5F62</button>\n                <!--<button v-show="editing" @click="close_poly()">\u5173\u95ED\u7F16\u8F91</button>-->\n                </div>\n     </div>',
+
+    mounted: function mounted() {
+        var self = this;
+        controller.on_click(function (row) {
+            if (!self.editing) {
+                controller.set_crt_polyon_row(row);
+            }
+        });
+    },
 
     methods: {
+        is_empty: function is_empty(obj) {
+            return Object.keys(obj).length == 0;
+        },
         new_row: function new_row() {
             this.$emit('new_row');
             this.editing = true;
@@ -261,41 +299,429 @@ var polygon_multi_btn_panel = exports.polygon_multi_btn_panel = {
                 })
             };
         },
+        save: function save() {
+            var self = this;
+            var row = {};
+            ex.assign(row, this.crt_row);
+            var path_pos = row.poly.getPath();
+            row.bounding = ex.map(path_pos, function (pos) {
+                return [pos.lng, pos.lat];
+            });
+            delete row['poly'];
+
+            var post_data = [{ fun: 'save', row: row }];
+            ex.post("/_ajax", JSON.stringify(post_data), function (resp) {
+                var resp_row = resp.save;
+                self.crt_row.id = resp_row.id;
+                self.crt_row.pk = resp_row.pk;
+
+                self.editing = false;
+                self.close_poly();
+            });
+        },
         fallback: function fallback() {
-            //ex.assign(this.crt_row,this.fallback_cache)
-            this.crt_row.name = this.fallback_cache.name;
-            this.crt_row.desp = this.fallback_cache.desp;
-
-            // 因为高德的Polygon直接操作opiotns设置的array属性，
-            // bounding 与 poly_bounding 的数据应该一致，所以有下面两行
-            this.crt_row.bounding = this.fallback_cache.oldpath;
-            this.crt_row.poly_bounding.setPath(this.crt_row.bounding);
-
             this.close_poly();
             this.editing = false;
+
+            if (!this.crt_row.pk) {
+                // 新建的情况
+                if (this.crt_row.poly) {
+
+                    this.crt_row.poly.setMap(null);
+                }
+                controller.items.pop();
+                controller.crt_row = {};
+            } else {
+                this.crt_row.name = this.fallback_cache.name;
+                this.crt_row.desp = this.fallback_cache.desp;
+
+                // 因为高德的Polygon直接操作opiotns设置的array属性，
+                // bounding 与 poly_bounding 的数据应该一致，所以有下面两行
+                this.crt_row.bounding = this.fallback_cache.oldpath;
+                this.crt_row.poly.setPath(this.crt_row.bounding);
+            }
         },
         _create_poly: function _create_poly() {
             var self = this;
             drawer.create_polygon(function (polygon) {
                 var poly_obj = drawer.insert_polygon(polygon);
                 controller.add_poly_2_row(self.crt_row, poly_obj);
+                controller.set_crt_polyon_row(self.crt_row);
                 drawer.edit_polygon(poly_obj);
             });
         },
         edit_poly: function edit_poly() {
             var self = this;
-            if (!this.crt_row.poly_bounding) {
+            if (!this.crt_row.poly) {
                 self._create_poly();
             } else {
-                var poly_obj = this.crt_row.poly_bounding;
+                var poly_obj = this.crt_row.poly;
                 drawer.edit_polygon(poly_obj);
             }
         },
         close_poly: function close_poly() {
             drawer.close_polygon();
+        },
+        remove: function remove() {
+            confirm("真的将该划分区域从该组中移除吗？", function (resp) {
+                alert(resp);
+            });
+        },
+        del: function del() {
+            confirm("真的删除该划分区域吗？", function (resp) {
+                alert(resp);
+            });
         }
     }
 };
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(4);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// add the styles to the DOM
+var update = __webpack_require__(6)(content, {});
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept("!!../../../../../../coblan/webcode/node_modules/css-loader/index.js!../../../../../../coblan/webcode/node_modules/sass-loader/lib/loader.js!./polygon_multi_com.scss", function() {
+			var newContent = require("!!../../../../../../coblan/webcode/node_modules/css-loader/index.js!../../../../../../coblan/webcode/node_modules/sass-loader/lib/loader.js!./polygon_multi_com.scss");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(5)();
+// imports
+
+
+// module
+exports.push([module.i, ".ploygon-btn-panel {\n  width: 15em;\n  margin: 0.5em;\n  background: #ffffff;\n  padding: 0.5em;\n  border: 1px solid #c8c8c8;\n  border-radius: 0.3em; }\n  .ploygon-btn-panel .hr {\n    border: 1px solid #dcdcdc;\n    height: 1px;\n    margin: 0.5em 0; }\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports) {
+
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+// css base code, injected by the css-loader
+module.exports = function() {
+	var list = [];
+
+	// return the list of modules as css string
+	list.toString = function toString() {
+		var result = [];
+		for(var i = 0; i < this.length; i++) {
+			var item = this[i];
+			if(item[2]) {
+				result.push("@media " + item[2] + "{" + item[1] + "}");
+			} else {
+				result.push(item[1]);
+			}
+		}
+		return result.join("");
+	};
+
+	// import a list of modules into the list
+	list.i = function(modules, mediaQuery) {
+		if(typeof modules === "string")
+			modules = [[null, modules, ""]];
+		var alreadyImportedModules = {};
+		for(var i = 0; i < this.length; i++) {
+			var id = this[i][0];
+			if(typeof id === "number")
+				alreadyImportedModules[id] = true;
+		}
+		for(i = 0; i < modules.length; i++) {
+			var item = modules[i];
+			// skip already imported module
+			// this implementation is not 100% perfect for weird media query combinations
+			//  when a module is imported multiple times with different media queries.
+			//  I hope this will never occur (Hey this way we have smaller bundles)
+			if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+				if(mediaQuery && !item[2]) {
+					item[2] = mediaQuery;
+				} else if(mediaQuery) {
+					item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+				}
+				list.push(item);
+			}
+		}
+	};
+	return list;
+};
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports) {
+
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+var stylesInDom = {},
+	memoize = function(fn) {
+		var memo;
+		return function () {
+			if (typeof memo === "undefined") memo = fn.apply(this, arguments);
+			return memo;
+		};
+	},
+	isOldIE = memoize(function() {
+		return /msie [6-9]\b/.test(self.navigator.userAgent.toLowerCase());
+	}),
+	getHeadElement = memoize(function () {
+		return document.head || document.getElementsByTagName("head")[0];
+	}),
+	singletonElement = null,
+	singletonCounter = 0,
+	styleElementsInsertedAtTop = [];
+
+module.exports = function(list, options) {
+	if(typeof DEBUG !== "undefined" && DEBUG) {
+		if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
+	}
+
+	options = options || {};
+	// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+	// tags it will allow on a page
+	if (typeof options.singleton === "undefined") options.singleton = isOldIE();
+
+	// By default, add <style> tags to the bottom of <head>.
+	if (typeof options.insertAt === "undefined") options.insertAt = "bottom";
+
+	var styles = listToStyles(list);
+	addStylesToDom(styles, options);
+
+	return function update(newList) {
+		var mayRemove = [];
+		for(var i = 0; i < styles.length; i++) {
+			var item = styles[i];
+			var domStyle = stylesInDom[item.id];
+			domStyle.refs--;
+			mayRemove.push(domStyle);
+		}
+		if(newList) {
+			var newStyles = listToStyles(newList);
+			addStylesToDom(newStyles, options);
+		}
+		for(var i = 0; i < mayRemove.length; i++) {
+			var domStyle = mayRemove[i];
+			if(domStyle.refs === 0) {
+				for(var j = 0; j < domStyle.parts.length; j++)
+					domStyle.parts[j]();
+				delete stylesInDom[domStyle.id];
+			}
+		}
+	};
+}
+
+function addStylesToDom(styles, options) {
+	for(var i = 0; i < styles.length; i++) {
+		var item = styles[i];
+		var domStyle = stylesInDom[item.id];
+		if(domStyle) {
+			domStyle.refs++;
+			for(var j = 0; j < domStyle.parts.length; j++) {
+				domStyle.parts[j](item.parts[j]);
+			}
+			for(; j < item.parts.length; j++) {
+				domStyle.parts.push(addStyle(item.parts[j], options));
+			}
+		} else {
+			var parts = [];
+			for(var j = 0; j < item.parts.length; j++) {
+				parts.push(addStyle(item.parts[j], options));
+			}
+			stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
+		}
+	}
+}
+
+function listToStyles(list) {
+	var styles = [];
+	var newStyles = {};
+	for(var i = 0; i < list.length; i++) {
+		var item = list[i];
+		var id = item[0];
+		var css = item[1];
+		var media = item[2];
+		var sourceMap = item[3];
+		var part = {css: css, media: media, sourceMap: sourceMap};
+		if(!newStyles[id])
+			styles.push(newStyles[id] = {id: id, parts: [part]});
+		else
+			newStyles[id].parts.push(part);
+	}
+	return styles;
+}
+
+function insertStyleElement(options, styleElement) {
+	var head = getHeadElement();
+	var lastStyleElementInsertedAtTop = styleElementsInsertedAtTop[styleElementsInsertedAtTop.length - 1];
+	if (options.insertAt === "top") {
+		if(!lastStyleElementInsertedAtTop) {
+			head.insertBefore(styleElement, head.firstChild);
+		} else if(lastStyleElementInsertedAtTop.nextSibling) {
+			head.insertBefore(styleElement, lastStyleElementInsertedAtTop.nextSibling);
+		} else {
+			head.appendChild(styleElement);
+		}
+		styleElementsInsertedAtTop.push(styleElement);
+	} else if (options.insertAt === "bottom") {
+		head.appendChild(styleElement);
+	} else {
+		throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");
+	}
+}
+
+function removeStyleElement(styleElement) {
+	styleElement.parentNode.removeChild(styleElement);
+	var idx = styleElementsInsertedAtTop.indexOf(styleElement);
+	if(idx >= 0) {
+		styleElementsInsertedAtTop.splice(idx, 1);
+	}
+}
+
+function createStyleElement(options) {
+	var styleElement = document.createElement("style");
+	styleElement.type = "text/css";
+	insertStyleElement(options, styleElement);
+	return styleElement;
+}
+
+function createLinkElement(options) {
+	var linkElement = document.createElement("link");
+	linkElement.rel = "stylesheet";
+	insertStyleElement(options, linkElement);
+	return linkElement;
+}
+
+function addStyle(obj, options) {
+	var styleElement, update, remove;
+
+	if (options.singleton) {
+		var styleIndex = singletonCounter++;
+		styleElement = singletonElement || (singletonElement = createStyleElement(options));
+		update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
+		remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
+	} else if(obj.sourceMap &&
+		typeof URL === "function" &&
+		typeof URL.createObjectURL === "function" &&
+		typeof URL.revokeObjectURL === "function" &&
+		typeof Blob === "function" &&
+		typeof btoa === "function") {
+		styleElement = createLinkElement(options);
+		update = updateLink.bind(null, styleElement);
+		remove = function() {
+			removeStyleElement(styleElement);
+			if(styleElement.href)
+				URL.revokeObjectURL(styleElement.href);
+		};
+	} else {
+		styleElement = createStyleElement(options);
+		update = applyToTag.bind(null, styleElement);
+		remove = function() {
+			removeStyleElement(styleElement);
+		};
+	}
+
+	update(obj);
+
+	return function updateStyle(newObj) {
+		if(newObj) {
+			if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
+				return;
+			update(obj = newObj);
+		} else {
+			remove();
+		}
+	};
+}
+
+var replaceText = (function () {
+	var textStore = [];
+
+	return function (index, replacement) {
+		textStore[index] = replacement;
+		return textStore.filter(Boolean).join('\n');
+	};
+})();
+
+function applyToSingletonTag(styleElement, index, remove, obj) {
+	var css = remove ? "" : obj.css;
+
+	if (styleElement.styleSheet) {
+		styleElement.styleSheet.cssText = replaceText(index, css);
+	} else {
+		var cssNode = document.createTextNode(css);
+		var childNodes = styleElement.childNodes;
+		if (childNodes[index]) styleElement.removeChild(childNodes[index]);
+		if (childNodes.length) {
+			styleElement.insertBefore(cssNode, childNodes[index]);
+		} else {
+			styleElement.appendChild(cssNode);
+		}
+	}
+}
+
+function applyToTag(styleElement, obj) {
+	var css = obj.css;
+	var media = obj.media;
+
+	if(media) {
+		styleElement.setAttribute("media", media)
+	}
+
+	if(styleElement.styleSheet) {
+		styleElement.styleSheet.cssText = css;
+	} else {
+		while(styleElement.firstChild) {
+			styleElement.removeChild(styleElement.firstChild);
+		}
+		styleElement.appendChild(document.createTextNode(css));
+	}
+}
+
+function updateLink(linkElement, obj) {
+	var css = obj.css;
+	var sourceMap = obj.sourceMap;
+
+	if(sourceMap) {
+		// http://stackoverflow.com/a/26603875
+		css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
+	}
+
+	var blob = new Blob([css], { type: "text/css" });
+
+	var oldSrc = linkElement.href;
+
+	linkElement.href = URL.createObjectURL(blob);
+
+	if(oldSrc)
+		URL.revokeObjectURL(oldSrc);
+}
+
 
 /***/ })
 /******/ ]);

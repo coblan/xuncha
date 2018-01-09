@@ -49,6 +49,9 @@
             controller.set_drawer(drawer)
             controller.set_group(this.kw.row.pk)
             controller.get_items()
+            map.on('click',function(){
+                controller.set_crt_polyon_row({})
+            })
         },
         methods:{
             item_link:function(name){
@@ -72,12 +75,15 @@
 
 {% endblock %}
 
-<div id='there'>
-    <div v-if="can_log" style='float: right;padding: 5px 20px;'>
-        <a :href="log_url()">History</a>
-    </div>
+<div id='there' style="height: 100%;" class="flex-v">
+
     <path-nav :menu='menu'>
         <li><span>编辑</span></li>
+
+        <div v-if="can_log" style='float: right;padding: 5px 20px;'>
+            <a :href="log_url()">History</a>
+        </div>
+
     </path-nav>
 
     <div class="flex">
@@ -91,11 +97,16 @@
     </div>
 
 
-    <polygon-multi-btn-panel :crt_row="controller.crt_row" @new_row="controller.new_row()"></polygon-multi-btn-panel>
 
-    <div style="width: 70vw;height: 70vh;position: relative;">
-        <div id="container"></div>
+
+    <div class="flex flex-grow" >
+        <div class="flex-grow" style="position: relative;">
+            <div id="container"></div>
+        </div>
+
+        <polygon-multi-btn-panel class="ploygon-btn-panel" :crt_row="controller.crt_row" @new_row="controller.new_row()"></polygon-multi-btn-panel>
     </div>
+
 
     <!--<div class='field-panel'>-->
         <!--<field  v-for='head in kw.heads' :key="head.name" :name='head.name' :kw='kw'></field>-->
@@ -137,11 +148,11 @@
                 this._polygon= new AMap.Polygon({
                     map: map,
                     path: arr,
-                    strokeColor: "#0000ff",
                     strokeOpacity: 1,
-                    strokeWeight: 3,
+                    fillOpacity: 0.35,
+                    strokeWeight:1,
+                    strokeColor: "#000000",
                     fillColor: "#f5deb3",
-                    fillOpacity: 0.35
                 })
                 return this._polygon
             },
