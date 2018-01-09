@@ -122,7 +122,7 @@ var ploygon_editor = exports.ploygon_editor = {
                 var point_arr = ex.map(polygon, function (point) {
                     return [point.lng, point.lat];
                 });
-                self.row[self.name] = JSON.stringify(point_arr);
+                self.row[self.name] = point_arr;
             };
         },
         copy: function copy() {

@@ -19,4 +19,4 @@ class BlockPolygon(models.Model):
     
 class BlockGroup(models.Model):
     name = models.CharField('分组名称',max_length=300)
-    blocks=models.ManyToManyField(BlockPolygon,verbose_name='包含区域')
+    blocks=models.ManyToManyField(BlockPolygon,verbose_name='包含区域',blank=True)
