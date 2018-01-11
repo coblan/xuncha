@@ -1,5 +1,5 @@
 
-require('./scss/polygon_multi_com.scss')
+
 
 export class PolygonGroupController{
     constructor(){

@@ -40,7 +40,7 @@ class BlockPolygonFormPage(FormPage):
                 self._group= BlockGroup.objects.get(pk=dc['group'])
             if 'bounding' in dc.keys():
                 dc['bounding'] = dict2poly(dc['bounding']) #  self._adapt_polygon_dict(dc['bounding'])
-            super(self.__class__,self).__init__(dc,pk,crt_user,nolimit)
+            super(self.__class__,self).__init__(dc,pk,crt_user,nolimit,*args,**kw)
         
         # def _adapt_polygon_dict(self,polygon_str):
             # if polygon_str:
@@ -131,7 +131,30 @@ class BlockGroupFormPage(TabGroup):
         else:
             return super(self.__class__,self).get_tabs()
     
+class BlockGroupDispatchPage(TablePage):
+    class BlockGroupTable(ModelTable):
+        model=BlockGroup
+        exclude=[]
         
+        def dict_row(self, inst):
+            block_list=[]
+            for block in inst.blocks.all():
+                bounding = poly2dict(block.bounding)
+                block_list.append(to_dict(block,filt_attr={'bounding':bounding}))
+            old_selected= inst.dispatched.blocks #[x.pk for x in inst.dispatched.blocks.all()]
+            dc={
+                'blocks':block_list,
+                'old_selected':old_selected,
+                'last':inst.dispatched.last,
+            }
+            return dc
+                
+            # return {
+                # 'blocks':[to_dict(x,form=True) for x in inst.blocks.all()]
+            # }
+    
+    tableCls=BlockGroupTable
+    template='geoinfo/blockgroup_dispatch.html'    
 
 model_dc[BlockPolygon]={'fields':BlockPolygonFormPage.BlockPolygonForm}
 model_dc[BlockGroup]={'fields':BlockGroupFormPage.BlockGroupFormPage_normal.BlockGroupForm}
@@ -141,5 +164,7 @@ page_dc.update({
     'geoinfo.blockpolygon.edit':BlockPolygonFormPage,
     
     'geoinfo.blockgroup':BlockGroupTablePage,
-    'geoinfo.blockgroup.edit':BlockGroupFormPage
+    'geoinfo.blockgroup.edit':BlockGroupFormPage,
+    
+    'geoinfo.dispatch':BlockGroupDispatchPage,
 })

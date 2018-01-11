@@ -76,10 +76,18 @@ var polygon_com = _interopRequireWildcard(_polygon_com);
 
 var _polygon_multi_com = __webpack_require__(2);
 
+var _map_com = __webpack_require__(7);
+
+var _dispatch_panel_com = __webpack_require__(8);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+__webpack_require__(9);
 
 Vue.component('polygon-input', polygon_com.ploygon_editor);
 Vue.component('polygon-multi-btn-panel', _polygon_multi_com.polygon_multi_btn_panel);
+Vue.component('com-map', _map_com.map_com);
+Vue.component('com-dispatch-panel', _dispatch_panel_com.dispatch_panel);
 
 window.PolygonGroupController = _polygon_multi_com.PolygonGroupController;
 
@@ -153,8 +161,6 @@ Object.defineProperty(exports, "__esModule", {
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-__webpack_require__(3);
 
 var PolygonGroupController = exports.PolygonGroupController = function () {
     function PolygonGroupController() {
@@ -374,46 +380,8 @@ var polygon_multi_btn_panel = exports.polygon_multi_btn_panel = {
 };
 
 /***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(4);
-if(typeof content === 'string') content = [[module.i, content, '']];
-// add the styles to the DOM
-var update = __webpack_require__(6)(content, {});
-if(content.locals) module.exports = content.locals;
-// Hot Module Replacement
-if(false) {
-	// When the styles change, update the <style> tags
-	if(!content.locals) {
-		module.hot.accept("!!../../../../../../coblan/webcode/node_modules/css-loader/index.js!../../../../../../coblan/webcode/node_modules/sass-loader/lib/loader.js!./polygon_multi_com.scss", function() {
-			var newContent = require("!!../../../../../../coblan/webcode/node_modules/css-loader/index.js!../../../../../../coblan/webcode/node_modules/sass-loader/lib/loader.js!./polygon_multi_com.scss");
-			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-			update(newContent);
-		});
-	}
-	// When the module is disposed, remove the <style> tags
-	module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(5)();
-// imports
-
-
-// module
-exports.push([module.i, ".ploygon-btn-panel {\n  width: 15em;\n  margin: 0.5em;\n  background: #ffffff;\n  padding: 0.5em;\n  border: 1px solid #c8c8c8;\n  border-radius: 0.3em; }\n  .ploygon-btn-panel .hr {\n    border: 1px solid #dcdcdc;\n    height: 1px;\n    margin: 0.5em 0; }\n", ""]);
-
-// exports
-
-
-/***/ }),
+/* 3 */,
+/* 4 */,
 /* 5 */
 /***/ (function(module, exports) {
 
@@ -719,6 +687,280 @@ function updateLink(linkElement, obj) {
 	if(oldSrc)
 		URL.revokeObjectURL(oldSrc);
 }
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var map_com = exports.map_com = {
+    template: "<div id=\"container\"></div>",
+    mounted: function mounted() {
+        var self = this;
+        var count = 0;
+        ex.load_css("http://cache.amap.com/lbs/static/main1119.css");
+        ex.load_js("http://webapi.amap.com/maps?v=1.3&key=您申请的key值&plugin=AMap.PolyEditor,AMap.CircleEditor,AMap.MouseTool", function () {
+            count += 1;
+            if (count == 2) {
+                self.init();
+            }
+        });
+        ex.load_js("http://cache.amap.com/lbs/static/addToolbar.js", function () {
+            count += 1;
+            if (count == 2) {
+                self.init();
+            }
+        });
+    },
+    data: function data() {
+        return {
+            ploygons: []
+        };
+    },
+    methods: {
+        on_init: function on_init(callback) {
+            this.on_init_call = callback;
+        },
+        on_polygon_click: function on_polygon_click(callback) {
+            this.on_polygon_click_callback = callback;
+        },
+        init: function init() {
+            this.editorTool, this.map = new AMap.Map(this.$el, {
+                resizeEnable: true,
+                center: [116.403322, 39.900255], //地图中心点
+                zoom: 13 //地图显示的缩放级别
+            });
+            if (this.on_init_call) {
+                this.on_init_call();
+            }
+        },
+        insert_polygon: function insert_polygon(arr) {
+            var self = this;
+            var _polygon = new AMap.Polygon({
+                map: this.map,
+                path: arr,
+                strokeOpacity: 1,
+                fillOpacity: 0.35,
+                strokeWeight: 1,
+                strokeColor: "#000000",
+                fillColor: "#f5deb3"
+            });
+            this.ploygons.push(_polygon);
+            _polygon.on('click', function () {
+                if (self.on_polygon_click_callback) {
+                    self.on_polygon_click_callback(_polygon);
+                }
+            });
+            return _polygon;
+        },
+        detach_polygon: function detach_polygon(poly) {
+            poly.setMap(null);
+        },
+        add_polygon: function add_polygon(poly) {
+            poly.setMap(this.map);
+        },
+        highlight_polygon: function highlight_polygon(poly, color) {
+            color = color || 'red';
+            poly.setOptions({
+                fillColor: color,
+                strokeWeight: 3,
+                strokeColor: "#0000ff"
+            });
+        },
+        remove_highlight_polygon: function remove_highlight_polygon(poly, color) {
+            color = color || '#f5deb3';
+            poly.setOptions({
+                strokeWeight: 1,
+                strokeColor: "#000000",
+                fillColor: color
+            });
+        }
+
+    }
+};
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var dispatch_panel = exports.dispatch_panel = {
+    props: ['rows'],
+    template: '<div>\n    <button @click="dispatch()">\u751F\u6210</button>\n    <button @click="submit()">\u786E\u5B9A</button>\n    <!--<button @click="highlight_last_selected()">\u4E0A\u6B21\u751F\u6548\u533A\u57DF</button>-->\n    <button @click="fit_view()">Fit View</button>\n    <div class="hr"></div>\n    <div v-for="row in rows"><span v-text="row.name"></span><input type="checkbox" :value="row" v-model="checked"/></div>\n\n    </div>',
+    data: function data() {
+        var date = new Date();
+        var date_str = date.toISOString();
+        var seed = date_str.slice(0, 10);
+        return {
+            checked: [],
+            selected_blocks: [],
+            seed: seed
+        };
+    },
+    mounted: function mounted() {},
+    watch: {
+        checked: function checked(new_value, old_value) {
+            var self = this;
+            ex.each(new_value, function (value) {
+                if (!ex.isin(value, old_value)) {
+                    self.add_row_polygons(value);
+                }
+            });
+            ex.each(old_value, function (value) {
+                if (!ex.isin(value, new_value)) {
+                    self.detach_row_polygons(value);
+                }
+            });
+        },
+        selected_blocks: function selected_blocks(new_value, old_value) {
+            var self = this;
+
+            ex.each(old_value, function (pair) {
+                var group = ex.findone(self.rows, { pk: pair.group });
+                var block = ex.findone(group.blocks, { pk: pair.block });
+                self.map_panel.remove_highlight_polygon(block.poly);
+            });
+
+            self.highlight_old_selected();
+            self.highlight_last_selected();
+
+            ex.each(new_value, function (pair) {
+                var group = ex.findone(self.rows, { pk: pair.group });
+                var block = ex.findone(group.blocks, { pk: pair.block });
+                self.map_panel.highlight_polygon(block.poly);
+            });
+        }
+
+    },
+    methods: {
+        init: function init(map_panel) {
+            var self = this;
+            self.map_panel = map_panel;
+            //self.map_panel.on_polygon_click(function(poly){
+            //    self.map_panel.highlight_polygon(poly)
+            //})
+
+            self.checked = self.rows;
+            Vue.nextTick(function () {
+                self.highlight_old_selected();
+                self.highlight_last_selected();
+                self.fit_view();
+            });
+        },
+        fit_view: function fit_view() {
+            this.map_panel.map.setFitView();
+        },
+        add_row_polygons: function add_row_polygons(row) {
+            var self = this;
+            ex.each(row.blocks, function (block) {
+                if (!block.poly) {
+                    var poly = self.map_panel.insert_polygon(block.bounding);
+                    block.poly = poly;
+                    poly.block = block;
+                } else {
+                    self.map_panel.add_polygon(block.poly);
+                }
+            });
+        },
+        detach_row_polygons: function detach_row_polygons(row) {
+            var self = this;
+            ex.each(row.blocks, function (block) {
+                self.map_panel.detach_polygon(block.poly);
+            });
+        },
+        dispatch: function dispatch() {
+            var self = this;
+            show_upload();
+            var post_data = [{ fun: 'dispatch_block', seed: self.seed }];
+            self.seed = self.seed + '0';
+            ex.post('/_ajax/geoinfo', JSON.stringify(post_data), function (resp) {
+                Vue.set(self, 'selected_blocks', resp.dispatch_block);
+                //self.selected_blocks= resp.dispatch_block
+
+                hide_upload(300);
+            });
+        },
+        submit: function submit() {
+
+            var post_data = [{ fun: 'submit_block', blocks: this.selected_blocks }];
+            ex.post('/_ajax/geoinfo', JSON.stringify(post_data), function (resp) {
+                //alert(resp.submit_block)
+                location.reload();
+            });
+        },
+        highlight_old_selected: function highlight_old_selected() {
+            var self = this;
+            ex.each(this.rows, function (row) {
+                ex.each(row.blocks, function (block) {
+                    if (ex.isin(block.pk, row.old_selected)) {
+                        self.map_panel.remove_highlight_polygon(block.poly, 'yellow');
+                    }
+                });
+            });
+        },
+        highlight_last_selected: function highlight_last_selected() {
+            var self = this;
+            ex.each(this.rows, function (row) {
+                var last_select_block = ex.findone(row.blocks, { pk: row.last });
+                if (last_select_block) {
+                    self.map_panel.remove_highlight_polygon(last_select_block.poly, 'green');
+                }
+            });
+        }
+
+    }
+
+};
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(10);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// add the styles to the DOM
+var update = __webpack_require__(6)(content, {});
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept("!!../../../../../../coblan/webcode/node_modules/css-loader/index.js!../../../../../../coblan/webcode/node_modules/sass-loader/lib/loader.js!./map_btn_panel.scss", function() {
+			var newContent = require("!!../../../../../../coblan/webcode/node_modules/css-loader/index.js!../../../../../../coblan/webcode/node_modules/sass-loader/lib/loader.js!./map_btn_panel.scss");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(5)();
+// imports
+
+
+// module
+exports.push([module.i, ".map-btn-panel {\n  width: 15em;\n  margin: 0.5em;\n  background: #ffffff;\n  padding: 0.5em;\n  border: 1px solid #c8c8c8;\n  border-radius: 0.3em; }\n  .map-btn-panel .hr {\n    border: 1px solid #dcdcdc;\n    height: 1px;\n    margin: 0.5em 0; }\n", ""]);
+
+// exports
 
 
 /***/ })

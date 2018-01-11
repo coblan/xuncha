@@ -4,6 +4,8 @@
 
 {% block page_content %}
 <script src='{% static "js/table.pack.js?t=" %}{{ js_stamp.table_pack_js }}'></script>
+<script src='{% static "js/geoinfo.pack.js?t=" %}{{ js_stamp.geoinfo_pack_js }}'></script>
+
 <script type="text/javascript">
 
     //	row_filters=
@@ -17,9 +19,6 @@
     //	can_del=
     //	search_args=ex.parseSearch()
     //	search字段从 search_args._q 来取值
-//    heads.push(
-//            {label:'',name:'operation',type:'edit-on-map'}
-//    )
     table_logic={
         el:'#there',
         data:{
@@ -37,6 +36,7 @@
 //		        model:model,
 //		        search_args:search_args,
 //		        ex:ex,
+//            map_panel:this.$refs.map_panel,
         },
         mixins:[table_fun],
         watch:{
@@ -45,6 +45,14 @@
                 this.search()
             }
         },
+        mounted:function(){
+            var self=this
+            this.$refs.map_panel.on_init(function(){
+                self.$refs.disp_panel.init(self.$refs.map_panel)
+            })
+
+        }
+
 
     }
     $(function () {
@@ -56,7 +64,7 @@
 {% block extra_head %}
 {% endblock %}
 
-<div id='there'>
+<div id='there' style="height: 100%;" class="flex-v">
     <path-nav :menu='menu' v-if="!search_args._pop"></path-nav>
     <div class='btn-panel flex flex-sb' style="padding-left:20px; ">
 
@@ -65,32 +73,30 @@
                     :search_tip='search_tip' @submit="search()"></com-filter>
         <div class="flex-grow"></div>
 
-        <com-table-btn v-if="!search_args._pop" :add_new="add_new" :del_item="del_item">
-            {% block extra_btn %}
-
-            <!--<button>hello</button>-->
-
-            {% endblock %}
-        </com-table-btn>
+        <!--<com-table-btn v-if="!search_args._pop" :add_new="add_new" :del_item="del_item">-->
+            <!--{% block extra_btn %}-->
+            <!--{% endblock %}-->
+        <!--</com-table-btn>-->
 
     </div>
 
-    <com-table class='table fake-suit' :has_check="!search_args._pop" :map="map"
-               :row_sort="row_sort" :heads="heads" :rows="rows" v-model="selected"></com-table>
+    <!--<com-table class='table fake-suit' :has_check="!search_args._pop" :map="map"-->
+               <!--:row_sort="row_sort" :heads="heads" :rows="rows" v-model="selected"></com-table>-->
 
 
-    <paginator :nums='row_pages.options' :crt='row_pages.crt_page' @goto_page='goto_page($event)'></paginator>
+
+    <!--<paginator :nums='row_pages.options' :crt='row_pages.crt_page' @goto_page='goto_page($event)'></paginator>-->
+
+    <div class="flex flex-grow" >
+        <div class="flex-grow" style="position: relative;">
+            <com-map ref="map_panel"></com-map>
+        </div>
+        <com-dispatch-panel class="map-btn-panel" :rows="rows" ref="disp_panel"></com-dispatch-panel>
+    </div>
+
 
 
 </div>
-
-<!--<script>-->
-    <!--Vue.component('edit-on-map',{-->
-        <!--template:"<span @click=''>edit</span>",-->
-        <!--props:['row','name'],-->
-        <!-- -->
-    <!--})-->
-<!--</script>-->
 
 {% block extra %}
 {% endblock %}
