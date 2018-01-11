@@ -20,6 +20,11 @@ class BlockPolygon(models.Model):
 class BlockGroup(models.Model):
     name = models.CharField('分组名称',max_length=300)
     blocks=models.ManyToManyField(BlockPolygon,verbose_name='包含区域',blank=True)
+    
+    def __init__(self,*args,**kw):
+        super(self.__class__,self).__init__(*args,**kw)
+        if not hasattr(self,'dispatched'):
+            Dispatched.objects.create(group=self)
 
 class Dispatched(models.Model):
     # blocks=models.ManyToManyField(BlockPolygon,verbose_name='包含区域',blank=True)
