@@ -4,20 +4,16 @@ export var map_com = {
     template:`<div id="container"></div>`,
     mounted:function(){
         var self=this
-        var count=0
+
         ex.load_css("http://cache.amap.com/lbs/static/main1119.css")
         ex.load_js("http://webapi.amap.com/maps?v=1.3&key=您申请的key值&plugin=AMap.PolyEditor,AMap.CircleEditor,AMap.MouseTool",function(){
-            count+=1
-            if(count==2){
-                self.init()
-            }
+            ex.load_js("http://cache.amap.com/lbs/static/addToolbar.js",function(){
+                    self.init()
+            })
+
+
         })
-        ex.load_js("http://cache.amap.com/lbs/static/addToolbar.js",function(){
-            count+=1
-            if(count==2){
-                self.init()
-            }
-        })
+
     },
     data:function(){
       return {
