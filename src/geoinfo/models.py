@@ -23,7 +23,7 @@ class BlockGroup(models.Model):
     
     def __init__(self,*args,**kw):
         super(self.__class__,self).__init__(*args,**kw)
-        if not hasattr(self,'dispatched'):
+        if self.pk and not hasattr(self,'dispatched'):
             Dispatched.objects.create(group=self)
 
 class Dispatched(models.Model):

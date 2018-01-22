@@ -95,6 +95,11 @@ class BlockGroupTablePage(TablePage):
     class BlockGroupTable(ModelTable):
         model=BlockGroup
         exclude=[]
+        
+        def dict_row(self, inst):
+            return {
+                'blocks':';'.join( [unicode(b) for b in inst.blocks.all()])
+            }
     
     tableCls=BlockGroupTable
     template='geoinfo/blockgroup.html'
@@ -102,10 +107,11 @@ class BlockGroupTablePage(TablePage):
 class BlockGroupFormPage(TabGroup):
     
     class BlockGroupFormPage_normal(FormPage):
+        template='geoinfo/blockgroup_form_norm.html'
         class BlockGroupForm(ModelFields):
             class Meta:
                 model=BlockGroup
-                exclude=[]        
+                exclude=['blocks']        
         fieldsCls=BlockGroupForm
     
     class BlockGroupFormPage_map(FormPage):

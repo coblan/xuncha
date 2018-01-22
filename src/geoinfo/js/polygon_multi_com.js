@@ -1,6 +1,5 @@
 
 
-
 export class PolygonGroupController{
     constructor(){
         this.items=[]
@@ -33,7 +32,7 @@ export class PolygonGroupController{
             name:'未命名',
             desp:'描述',
             bounding:null,
-            group:window. row.pk,
+            group:window.row.pk,
             _class:"geoinfo.blockpolygon",
         }
         this.items.push(row)
@@ -51,6 +50,11 @@ export class PolygonGroupController{
                 self.click_callback(this.row)
             }
         })
+    }
+    delete_row(row){
+        row.poly.setMap(null)
+        ex.remove(this.items,row)
+
     }
     on_click(callback){
         this.click_callback=callback
@@ -82,36 +86,53 @@ export class PolygonGroupController{
 
 
 export var polygon_multi_btn_panel={
-    props:['crt_row'],
+    props:['crt_row','items'],
     data:function(){
 
       return {
-          editing:false
+          editing:false,
+          crt_view:'btn-panel',
       }
     },
     template:`<div style="float: right;">
-                <button v-show="!editing && !is_empty(crt_row)" @click="start_edit()">编辑</button>
-                <button v-show="editing" @click="save()">保存</button>
-                <button v-show="editing" @click="fallback()">取消</button>
-                <button v-show="!editing" @click="new_row()">新建</button>
+                 <ul class="nav nav-tabs" style="margin-bottom:1em; ">
+                  <li role="presentation" :class="{'active':crt_view=='btn-panel'}" @click="crt_view='btn-panel'"><a href="#">编辑面板</a></li>
+                  <li role="presentation" :class="{'active':crt_view=='list'}" @click="crt_view='list'"><a href="#">分区列表</a></li>
 
-                <button v-show="!editing && !is_empty(crt_row)" @click="remove()">移除</button>
-                <button v-show="!editing && !is_empty(crt_row)" @click="del()">删除</button>
-                <div class="hr"></div>
-                <div>
-                    <div>
-                        <label for="">名字</label>
-                        <span v-if="!editing" v-text="crt_row.name"></span>
-                        <input v-else type="text" v-model="crt_row.name"/>
-                    </div>
-                    <div>
-                         <label for="">描述</label>
-                         <span v-if="!editing" v-text="crt_row.desp"></span>
-                        <textarea v-else  rows="10" v-model="crt_row.desp"></textarea>
-                    </div>
-                    <button v-show="editing" @click="edit_poly()">编辑多边形</button>
-                <!--<button v-show="editing" @click="close_poly()">关闭编辑</button>-->
+                </ul>
+                <div v-show="crt_view=='list'">
+                    <ul>
+                        <li v-for="item in items"><a @click="set_crt_row(item)" href="#" v-text="item.name"></a></li>
+                    </ul>
                 </div>
+                <div v-show="crt_view=='btn-panel'">
+                    <button v-show="!editing" @click="new_row()">新建</button>
+                    
+                     <button v-show="!editing && !is_empty(crt_row)" @click="start_edit()">编辑</button>
+                    <button v-show="editing" @click="save()">保存</button>
+                    <button v-show="editing" @click="fallback()">取消</button>
+
+
+                    <!--<button v-show="!editing && !is_empty(crt_row)" @click="remove()">移除</button>-->
+                    <button v-show="!editing && !is_empty(crt_row)" @click="del(crt_row)">删除</button>
+                    <div class="hr"></div>
+                    <div>
+                        <div>
+                            <label for="">名字</label>
+                            <span v-if="!editing" v-text="crt_row.name"></span>
+                            <input v-else type="text" v-model="crt_row.name"/>
+                        </div>
+                        <div>
+                             <label for="">描述</label>
+                             <span v-if="!editing" v-text="crt_row.desp"></span>
+                            <textarea v-else  rows="10" v-model="crt_row.desp"></textarea>
+                        </div>
+                        <button v-show="editing" @click="edit_poly()">编辑分区</button>
+                    <!--<button v-show="editing" @click="close_poly()">关闭编辑</button>-->
+                    </div>
+
+                </div>
+
      </div>`,
 
 
@@ -130,6 +151,9 @@ export var polygon_multi_btn_panel={
     },
 
     methods:{
+        set_crt_row:function(row){
+            controller.set_crt_polyon_row(row)
+        },
         is_empty:function(obj){
           return Object.keys(obj).length ==0
         },
@@ -151,10 +175,16 @@ export var polygon_multi_btn_panel={
             var self=this
             var row={}
             ex.assign(row,this.crt_row)
+            if(!row.poly){
+                alert('请创建一个多边形')
+                return
+            }
+
             var path_pos= row.poly.getPath()
             row.bounding= ex.map(path_pos,function(pos){
                 return [pos.lng,pos.lat]
             })
+
             delete row['poly']
 
             var post_data=[{fun:'save',row:row}]
@@ -218,10 +248,21 @@ export var polygon_multi_btn_panel={
                 alert(resp)
             })
         },
-        del:function(){
-            confirm("真的删除该划分区域吗？",function(resp){
-                alert(resp)
-            })
+        del:function(row){
+            var r = confirm("真的删除该划分区域吗？")
+            if(r){
+                if(row.pk){
+                    var self=this
+                    var post_data=[{fun:'del_rows',rows:[{pk:row.pk,_class:row._class}]}]
+                    ex.post('/_ajax',JSON.stringify(post_data),function(resp){
+                        controller.delete_row(row)
+                    })
+                }else{
+                    controller.delete_row(row)
+                }
+
+            }
+
         }
     }
 }

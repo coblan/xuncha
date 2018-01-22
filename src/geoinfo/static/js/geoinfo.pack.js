@@ -229,6 +229,12 @@ var PolygonGroupController = exports.PolygonGroupController = function () {
             });
         }
     }, {
+        key: 'delete_row',
+        value: function delete_row(row) {
+            row.poly.setMap(null);
+            ex.remove(this.items, row);
+        }
+    }, {
         key: 'on_click',
         value: function on_click(callback) {
             this.click_callback = callback;
@@ -262,14 +268,15 @@ var PolygonGroupController = exports.PolygonGroupController = function () {
 }();
 
 var polygon_multi_btn_panel = exports.polygon_multi_btn_panel = {
-    props: ['crt_row'],
+    props: ['crt_row', 'items'],
     data: function data() {
 
         return {
-            editing: false
+            editing: false,
+            crt_view: 'btn-panel'
         };
     },
-    template: '<div style="float: right;">\n                <button v-show="!editing && !is_empty(crt_row)" @click="start_edit()">\u7F16\u8F91</button>\n                <button v-show="editing" @click="save()">\u4FDD\u5B58</button>\n                <button v-show="editing" @click="fallback()">\u53D6\u6D88</button>\n                <button v-show="!editing" @click="new_row()">\u65B0\u5EFA</button>\n\n                <button v-show="!editing && !is_empty(crt_row)" @click="remove()">\u79FB\u9664</button>\n                <button v-show="!editing && !is_empty(crt_row)" @click="del()">\u5220\u9664</button>\n                <div class="hr"></div>\n                <div>\n                    <div>\n                        <label for="">\u540D\u5B57</label>\n                        <span v-if="!editing" v-text="crt_row.name"></span>\n                        <input v-else type="text" v-model="crt_row.name"/>\n                    </div>\n                    <div>\n                         <label for="">\u63CF\u8FF0</label>\n                         <span v-if="!editing" v-text="crt_row.desp"></span>\n                        <textarea v-else  rows="10" v-model="crt_row.desp"></textarea>\n                    </div>\n                    <button v-show="editing" @click="edit_poly()">\u7F16\u8F91\u591A\u8FB9\u5F62</button>\n                <!--<button v-show="editing" @click="close_poly()">\u5173\u95ED\u7F16\u8F91</button>-->\n                </div>\n     </div>',
+    template: '<div style="float: right;">\n                 <ul class="nav nav-tabs" style="margin-bottom:1em; ">\n                  <li role="presentation" :class="{\'active\':crt_view==\'btn-panel\'}" @click="crt_view=\'btn-panel\'"><a href="#">\u7F16\u8F91\u9762\u677F</a></li>\n                  <li role="presentation" :class="{\'active\':crt_view==\'list\'}" @click="crt_view=\'list\'"><a href="#">\u5206\u533A\u5217\u8868</a></li>\n\n                </ul>\n                <div v-show="crt_view==\'list\'">\n                    <ul>\n                        <li v-for="item in items"><a @click="set_crt_row(item)" href="#" v-text="item.name"></a></li>\n                    </ul>\n                </div>\n                <div v-show="crt_view==\'btn-panel\'">\n                    <button v-show="!editing" @click="new_row()">\u65B0\u5EFA</button>\n                    \n                     <button v-show="!editing && !is_empty(crt_row)" @click="start_edit()">\u7F16\u8F91</button>\n                    <button v-show="editing" @click="save()">\u4FDD\u5B58</button>\n                    <button v-show="editing" @click="fallback()">\u53D6\u6D88</button>\n\n\n                    <!--<button v-show="!editing && !is_empty(crt_row)" @click="remove()">\u79FB\u9664</button>-->\n                    <button v-show="!editing && !is_empty(crt_row)" @click="del(crt_row)">\u5220\u9664</button>\n                    <div class="hr"></div>\n                    <div>\n                        <div>\n                            <label for="">\u540D\u5B57</label>\n                            <span v-if="!editing" v-text="crt_row.name"></span>\n                            <input v-else type="text" v-model="crt_row.name"/>\n                        </div>\n                        <div>\n                             <label for="">\u63CF\u8FF0</label>\n                             <span v-if="!editing" v-text="crt_row.desp"></span>\n                            <textarea v-else  rows="10" v-model="crt_row.desp"></textarea>\n                        </div>\n                        <button v-show="editing" @click="edit_poly()">\u7F16\u8F91\u5206\u533A</button>\n                    <!--<button v-show="editing" @click="close_poly()">\u5173\u95ED\u7F16\u8F91</button>-->\n                    </div>\n\n                </div>\n\n     </div>',
 
     mounted: function mounted() {
         var self = this;
@@ -286,6 +293,9 @@ var polygon_multi_btn_panel = exports.polygon_multi_btn_panel = {
     },
 
     methods: {
+        set_crt_row: function set_crt_row(row) {
+            controller.set_crt_polyon_row(row);
+        },
         is_empty: function is_empty(obj) {
             return Object.keys(obj).length == 0;
         },
@@ -307,10 +317,16 @@ var polygon_multi_btn_panel = exports.polygon_multi_btn_panel = {
             var self = this;
             var row = {};
             ex.assign(row, this.crt_row);
+            if (!row.poly) {
+                alert('请创建一个多边形');
+                return;
+            }
+
             var path_pos = row.poly.getPath();
             row.bounding = ex.map(path_pos, function (pos) {
                 return [pos.lng, pos.lat];
             });
+
             delete row['poly'];
 
             var post_data = [{ fun: 'save', row: row }];
@@ -371,10 +387,19 @@ var polygon_multi_btn_panel = exports.polygon_multi_btn_panel = {
                 alert(resp);
             });
         },
-        del: function del() {
-            confirm("真的删除该划分区域吗？", function (resp) {
-                alert(resp);
-            });
+        del: function del(row) {
+            var r = confirm("真的删除该划分区域吗？");
+            if (r) {
+                if (row.pk) {
+                    var self = this;
+                    var post_data = [{ fun: 'del_rows', rows: [{ pk: row.pk, _class: row._class }] }];
+                    ex.post('/_ajax', JSON.stringify(post_data), function (resp) {
+                        controller.delete_row(row);
+                    });
+                } else {
+                    controller.delete_row(row);
+                }
+            }
         }
     }
 };

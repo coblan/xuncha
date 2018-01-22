@@ -123,19 +123,19 @@ function load_vue_com(kw) {
      label:string,
      callback:function,
      }
-      callback的使用方法：
-      #在parent页面触发vue_com页面，
+       callback的使用方法：
+       #在parent页面触发vue_com页面，
      load_vue_com({other:xxx,  callback:function(com_resp){
      dosomething(com_resp)
      }
-      #在vue_com页面中，在返回parent页面时，要调用注册的回调函数。
+       #在vue_com页面中，在返回parent页面时，要调用注册的回调函数。
      methods:{
      back:function(){
      this.$parent.callback(my_resp)
      mainView.router.back()
      }
      }
-      * */
+       * */
 
     var html = input_vue_com_html;
 

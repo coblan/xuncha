@@ -104,7 +104,7 @@
             <div id="container"></div>
         </div>
 
-        <polygon-multi-btn-panel class="map-btn-panel" :crt_row="controller.crt_row" @new_row="controller.new_row()"></polygon-multi-btn-panel>
+        <polygon-multi-btn-panel class="map-btn-panel" :crt_row="controller.crt_row" :items="controller.items" @new_row="controller.new_row()"></polygon-multi-btn-panel>
     </div>
 
 
@@ -123,7 +123,7 @@
     function init_map(){
         window.editorTool,window. map = new AMap.Map("container", {
             resizeEnable: true,
-            center: [116.403322, 39.900255],//地图中心点
+            center: [121.159647,31.157344],//地图中心点
             zoom: 13 //地图显示的缩放级别
         });
         mouseTool = new AMap.MouseTool(map);
