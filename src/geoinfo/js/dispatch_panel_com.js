@@ -6,7 +6,10 @@ export  var dispatch_panel={
     <!--<button @click="highlight_last_selected()">上次生效区域</button>-->
     <button @click="fit_view()">Fit View</button>
     <div class="hr"></div>
-    <div v-for="row in rows"><span v-text="row.name"></span><input type="checkbox" :value="row" v-model="checked"/></div>
+    <div v-for="row in rows">
+        <label :for="row.pk" v-text="row.name"></label>
+        <input :id='row.pk' type="checkbox" :value="row" v-model="checked"/>
+    </div>
 
     </div>`,
     data:function(){

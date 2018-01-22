@@ -107,7 +107,7 @@ export var polygon_multi_btn_panel={
                 </div>
                 <div v-show="crt_view=='btn-panel'">
                     <button v-show="!editing" @click="new_row()">新建</button>
-                    
+
                      <button v-show="!editing && !is_empty(crt_row)" @click="start_edit()">编辑</button>
                     <button v-show="editing" @click="save()">保存</button>
                     <button v-show="editing" @click="fallback()">取消</button>
