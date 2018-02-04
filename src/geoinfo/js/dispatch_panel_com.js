@@ -109,7 +109,7 @@ export  var dispatch_panel={
                 Vue.set(self,'selected_blocks',resp.dispatch_block)
                 //self.selected_blocks= resp.dispatch_block
 
-                hide_upload(300)
+                hide_upload(30*1000)
             })
         },
         submit:function(){
