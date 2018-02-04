@@ -1,4 +1,6 @@
-
+/*分发页面的地图组件
+*
+* */
 
 export var map_com = {
     template:`<div id="container"></div>`,
@@ -8,7 +10,10 @@ export var map_com = {
         ex.load_css("http://cache.amap.com/lbs/static/main1119.css")
         ex.load_js("http://webapi.amap.com/maps?v=1.3&key=您申请的key值&plugin=AMap.PolyEditor,AMap.CircleEditor,AMap.MouseTool",function(){
             ex.load_js("http://cache.amap.com/lbs/static/addToolbar.js",function(){
+                setTimeout(function(){
                     self.init()
+                },10)
+
             })
 
 
