@@ -78,21 +78,22 @@
 
 <div id='there' style="height: 100%;" class="flex-v">
     <path-nav :menu='menu' v-if="!search_args._pop">
-        <button @click="toggle_fullscreen()">全屏</button>
+
     </path-nav>
-    <div class='btn-panel flex flex-sb' style="padding-left:20px; ">
+
+    <!--没用到filtter暂时屏蔽他-->
+
+    <!--<div class='btn-panel flex flex-sb' style="padding-left:20px; ">-->
 
         <!--<div v-if="row_filters.length==0" class="flex-grow"></div>-->
-        <com-filter class="flex" :heads="row_filters" :search="search_args"
-                    :search_tip='search_tip' @submit="search()"></com-filter>
-        <div class="flex-grow"></div>
 
-        <!--<com-table-btn v-if="!search_args._pop" :add_new="add_new" :del_item="del_item">-->
-            <!--{% block extra_btn %}-->
-            <!--{% endblock %}-->
-        <!--</com-table-btn>-->
+        <!--<com-filter class="flex" :heads="row_filters" :search="search_args"-->
+                    <!--&lt;!&ndash;:search_tip='search_tip' @submit="search()"></com-filter>&ndash;&gt;-->
 
-    </div>
+
+        <!--<div class="flex-grow"></div>-->
+        <!-- -->
+    <!--</div>-->
 
     <!--<com-table class='table fake-suit' :has_check="!search_args._pop" :map="map"-->
                <!--:row_sort="row_sort" :heads="heads" :rows="rows" v-model="selected"></com-table>-->
@@ -104,8 +105,13 @@
     <div class="flex flex-grow" >
         <div class="flex-grow" style="position: relative;">
             <com-map ref="map_panel"></com-map>
+            <div style="position: absolute;right: 2em;top:2em;">
+                <button @click="toggle_fullscreen()" type="button" class="btn btn-primary">切换全屏</button>
+            </div>
+
         </div>
         <com-dispatch-panel class="map-btn-panel" :rows="rows" ref="disp_panel"></com-dispatch-panel>
+
     </div>
 
 

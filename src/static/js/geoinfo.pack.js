@@ -80,9 +80,13 @@ var _map_com = __webpack_require__(3);
 
 var _dispatch_panel_com = __webpack_require__(4);
 
+var _fullscreen = __webpack_require__(5);
+
+var dispatch = _interopRequireWildcard(_fullscreen);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
-__webpack_require__(5);
+__webpack_require__(6);
 
 Vue.component('polygon-input', polygon_com.ploygon_editor);
 Vue.component('polygon-multi-btn-panel', _polygon_multi_com.polygon_multi_btn_panel);
@@ -414,6 +418,10 @@ var polygon_multi_btn_panel = exports.polygon_multi_btn_panel = {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+/*分发页面的地图组件
+*
+* */
+
 var map_com = exports.map_com = {
     template: "<div id=\"container\"></div>",
     mounted: function mounted() {
@@ -422,7 +430,9 @@ var map_com = exports.map_com = {
         ex.load_css("http://cache.amap.com/lbs/static/main1119.css");
         ex.load_js("http://webapi.amap.com/maps?v=1.3&key=您申请的key值&plugin=AMap.PolyEditor,AMap.CircleEditor,AMap.MouseTool", function () {
             ex.load_js("http://cache.amap.com/lbs/static/addToolbar.js", function () {
-                self.init();
+                setTimeout(function () {
+                    self.init();
+                }, 10);
             });
         });
     },
@@ -454,7 +464,7 @@ var map_com = exports.map_com = {
                 map: this.map,
                 path: arr,
                 strokeOpacity: 1,
-                fillOpacity: 0.35,
+                fillOpacity: 0.2,
                 strokeWeight: 1,
                 strokeColor: "#000000",
                 fillColor: "#f5deb3"
@@ -635,20 +645,51 @@ var dispatch_panel = exports.dispatch_panel = {
 /* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.fullscreen = fullscreen;
+function fullscreen() {
+    $('#menu').hide();
+    $('.map-btn-panel').hide();
+    $('#head').hide();
+    $('.breadcrumb').hide();
+    $('#footer').hide();
+    $('.btn-panel').hide();
+}
+function exit_fullscreen() {
+    $('#menu').show();
+    $('.map-btn-panel').show();
+    $('#head').show();
+    $('.breadcrumb').show();
+    $('#footer').show();
+    $('.btn-panel').show();
+}
+
+window.fullscreen = fullscreen;
+window.exit_fullscreen = exit_fullscreen;
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(6);
+var content = __webpack_require__(7);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // add the styles to the DOM
-var update = __webpack_require__(8)(content, {});
+var update = __webpack_require__(9)(content, {});
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
 	// When the styles change, update the <style> tags
 	if(!content.locals) {
-		module.hot.accept("!!../../../../../../coblan/webcode/node_modules/css-loader/index.js!../../../../../../coblan/webcode/node_modules/sass-loader/lib/loader.js!./map_btn_panel.scss", function() {
-			var newContent = require("!!../../../../../../coblan/webcode/node_modules/css-loader/index.js!../../../../../../coblan/webcode/node_modules/sass-loader/lib/loader.js!./map_btn_panel.scss");
+		module.hot.accept("!!./../../../../../../coblan/webcode/node_modules/.0.26.1@css-loader/index.js!./../../../../../../coblan/webcode/node_modules/.6.0.0@sass-loader/lib/loader.js!./map_btn_panel.scss", function() {
+			var newContent = require("!!./../../../../../../coblan/webcode/node_modules/.0.26.1@css-loader/index.js!./../../../../../../coblan/webcode/node_modules/.6.0.0@sass-loader/lib/loader.js!./map_btn_panel.scss");
 			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 			update(newContent);
 		});
@@ -658,10 +699,10 @@ if(false) {
 }
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(7)();
+exports = module.exports = __webpack_require__(8)();
 // imports
 
 
@@ -672,7 +713,7 @@ exports.push([module.i, ".map-btn-panel {\n  width: 15em;\n  margin: 0.5em;\n  b
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports) {
 
 /*
@@ -728,7 +769,7 @@ module.exports = function() {
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports) {
 
 /*
@@ -744,7 +785,7 @@ var stylesInDom = {},
 		};
 	},
 	isOldIE = memoize(function() {
-		return /msie [6-9]\b/.test(self.navigator.userAgent.toLowerCase());
+		return /msie [6-9]\b/.test(window.navigator.userAgent.toLowerCase());
 	}),
 	getHeadElement = memoize(function () {
 		return document.head || document.getElementsByTagName("head")[0];

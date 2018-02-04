@@ -48,7 +48,7 @@ export var map_com = {
                 map: this.map,
                 path: arr,
                 strokeOpacity: 1,
-                fillOpacity: 0.35,
+                fillOpacity: 0.2,
                 strokeWeight:1,
                 strokeColor: "#000000",
                 fillColor: "#f5deb3",
