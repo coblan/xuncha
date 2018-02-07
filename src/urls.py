@@ -37,7 +37,7 @@ urlpatterns = [
     url(r'^_face/', include(face_urls)),
     url(r'^_download/(?P<app>\w+)?/?$',director_views.donwload_views,name='download_url'),    
     
-    url(r'^$',RedirectView.as_view(url='/pc/geoinfo.blockpolygon'))
+    url(r'^$',RedirectView.as_view(url='/pc/geoinfo.dispatch'))
 ]
 
 

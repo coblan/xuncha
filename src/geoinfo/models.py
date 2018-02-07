@@ -31,3 +31,4 @@ class Dispatched(models.Model):
     group=models.OneToOneField(BlockGroup, on_delete=models.CASCADE)
     blocks=JsonField(verbose_name='已选择区域',default=[])
     last=models.CharField('上次选中',max_length=30,blank=True)
+    last_time = models.DateTimeField('上次生成时间',auto_now=True)
