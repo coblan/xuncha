@@ -15,7 +15,7 @@ export  var dispatch_panel={
     data:function(){
         var date = new Date()
         var date_str = date.toISOString()
-        var seed = date_str.slice(0,10)
+        var seed = date_str.slice(0,10) // 今天，例如2018-02-07
         return {
             checked:[],
             selected_blocks:[],

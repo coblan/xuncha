@@ -1,9 +1,15 @@
 # encoding:utf-8
-
+from __future__ import unicode_literals
 from .models import BlockGroup,Dispatched
 import random
 
 def dispatch(group,seed):
+    """
+    @group:BlockGroup 对象
+    @seed:前端发送过来的种子，这里一般采用日期.
+    
+    return: 选中的BlockPolygon的pk值
+    """
     if not hasattr(group,'dispatched'):
         Dispatched.objects.create(group=group)
     can_select=_get_can_select(group)
