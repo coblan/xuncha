@@ -13,6 +13,9 @@ def dispatch(group,seed):
     if not hasattr(group,'dispatched'):
         Dispatched.objects.create(group=group)
     can_select=_get_can_select(group)
+    last_time = Dispatched.objects.last().last_time
+    last_time = unicode(last_time)
+    seed=last_time+seed
     return _random_select_block(can_select,seed)
 
 def _get_can_select(group):

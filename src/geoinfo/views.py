@@ -16,18 +16,18 @@ def forecast(request):
     预测分发区域
     """
     jiezheng = request.GET.get('jiezheng','')
-    now = datetime.now()
-    seed = request.GET.get('seed',now.strftime('%Y-%m-%d'))
+    # now = datetime.now()
+    # seed = request.GET.get('seed',)
     group = BlockGroup.objects.get(pk=jiezheng)
     out=[]
     if group.dispatched.last:
         poly = BlockPolygon.objects.get(pk=group.dispatched.last)
         out.append({'time': group.dispatched.last_time.strftime('%Y-%m-%d %H:%M:%S'),
                     'polygon': poly2dict(poly.bounding) } )
-    
-    for i in range(3):
+    seed=''
+    for i in range(2):
         block_pk = dispatch(group, seed)
         block = BlockPolygon.objects.get(pk=block_pk)
         out.append({'polygon': poly2dict(block.bounding)})
-        seed+='a'
+        seed+='z'
     return out

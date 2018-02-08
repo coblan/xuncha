@@ -13,13 +13,13 @@ export  var dispatch_panel={
 
     </div>`,
     data:function(){
-        var date = new Date()
-        var date_str = date.toISOString()
-        var seed = date_str.slice(0,10) // 今天，例如2018-02-07
+        //var date = new Date()
+        //var date_str = date.toISOString()
+        //var seed = date_str.slice(0,10) // 今天，例如2018-02-07
         return {
             checked:[],
             selected_blocks:[],
-            seed:seed,
+            seed:'',
         }
     },
     mounted:function(){
@@ -104,11 +104,12 @@ export  var dispatch_panel={
             var self=this
             show_upload()
             var post_data=[{fun:'dispatch_block',seed:self.seed}]
-            self.seed = self.seed +'0'
+            self.seed = self.seed +'z'
             ex.post('/_ajax/geoinfo',JSON.stringify(post_data),function(resp){
                 Vue.set(self,'selected_blocks',resp.dispatch_block)
                 //self.selected_blocks= resp.dispatch_block
 
+                //hide_upload()
                 hide_upload(30*1000)
             })
         },

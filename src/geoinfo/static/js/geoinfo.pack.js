@@ -517,13 +517,13 @@ var dispatch_panel = exports.dispatch_panel = {
     props: ['rows'],
     template: '<div>\n    <button @click="dispatch()">\u751F\u6210</button>\n    <button @click="submit()">\u786E\u5B9A</button>\n    <!--<button @click="highlight_last_selected()">\u4E0A\u6B21\u751F\u6548\u533A\u57DF</button>-->\n    <button @click="fit_view()">Fit View</button>\n    <div class="hr"></div>\n    <div v-for="row in rows">\n        <label :for="row.pk" v-text="row.name"></label>\n        <input :id=\'row.pk\' type="checkbox" :value="row" v-model="checked"/>\n    </div>\n\n    </div>',
     data: function data() {
-        var date = new Date();
-        var date_str = date.toISOString();
-        var seed = date_str.slice(0, 10);
+        //var date = new Date()
+        //var date_str = date.toISOString()
+        //var seed = date_str.slice(0,10) // 今天，例如2018-02-07
         return {
             checked: [],
             selected_blocks: [],
-            seed: seed
+            seed: ''
         };
     },
     mounted: function mounted() {},
@@ -601,11 +601,12 @@ var dispatch_panel = exports.dispatch_panel = {
             var self = this;
             show_upload();
             var post_data = [{ fun: 'dispatch_block', seed: self.seed }];
-            self.seed = self.seed + '0';
+            self.seed = self.seed + 'z';
             ex.post('/_ajax/geoinfo', JSON.stringify(post_data), function (resp) {
                 Vue.set(self, 'selected_blocks', resp.dispatch_block);
                 //self.selected_blocks= resp.dispatch_block
 
+                //hide_upload()
                 hide_upload(30 * 1000);
             });
         },
@@ -688,8 +689,8 @@ if(content.locals) module.exports = content.locals;
 if(false) {
 	// When the styles change, update the <style> tags
 	if(!content.locals) {
-		module.hot.accept("!!./../../../../../../coblan/webcode/node_modules/.0.26.1@css-loader/index.js!./../../../../../../coblan/webcode/node_modules/.6.0.0@sass-loader/lib/loader.js!./map_btn_panel.scss", function() {
-			var newContent = require("!!./../../../../../../coblan/webcode/node_modules/.0.26.1@css-loader/index.js!./../../../../../../coblan/webcode/node_modules/.6.0.0@sass-loader/lib/loader.js!./map_btn_panel.scss");
+		module.hot.accept("!!../../../../../../coblan/webcode/node_modules/css-loader/index.js!../../../../../../coblan/webcode/node_modules/sass-loader/lib/loader.js!./map_btn_panel.scss", function() {
+			var newContent = require("!!../../../../../../coblan/webcode/node_modules/css-loader/index.js!../../../../../../coblan/webcode/node_modules/sass-loader/lib/loader.js!./map_btn_panel.scss");
 			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 			update(newContent);
 		});
@@ -785,7 +786,7 @@ var stylesInDom = {},
 		};
 	},
 	isOldIE = memoize(function() {
-		return /msie [6-9]\b/.test(window.navigator.userAgent.toLowerCase());
+		return /msie [6-9]\b/.test(self.navigator.userAgent.toLowerCase());
 	}),
 	getHeadElement = memoize(function () {
 		return document.head || document.getElementsByTagName("head")[0];
