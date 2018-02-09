@@ -554,6 +554,10 @@ var urlparse = exports.urlparse = {
     }
 };
 
+function para_encode(para_str) {
+    return encodeURI(para_str).replace('+', '%2B');
+}
+
 /***/ }),
 
 /***/ 51:
