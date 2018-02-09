@@ -5,7 +5,7 @@ import  {dispatch_panel} from './dispatch_panel_com.js'
 require('./scss/map_btn_panel.scss')
 
 import * as dispatch from './dispatch/fullscreen.js'
-
+import {shot} from './shot.js'
 
 Vue.component('polygon-input',polygon_com.ploygon_editor)
 Vue.component('polygon-multi-btn-panel',polygon_multi_btn_panel)

@@ -4,6 +4,7 @@ export  var dispatch_panel={
     <button @click="dispatch()">生成</button>
     <button @click="submit()">确定</button>
     <!--<button @click="highlight_last_selected()">上次生效区域</button>-->
+
     <button @click="fit_view()">Fit View</button>
     <div class="hr"></div>
     <div v-for="row in rows">
@@ -140,8 +141,7 @@ export  var dispatch_panel={
                     self.map_panel.remove_highlight_polygon(last_select_block.poly,'green')
                 }
             })
-        }
-
+        },
 
     }
 

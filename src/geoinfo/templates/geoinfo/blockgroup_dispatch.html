@@ -4,7 +4,16 @@
 
 {% block page_content %}
 <script src='{% static "js/table.pack.js?t=" %}{{ js_stamp.table_pack_js }}'></script>
+
+<script src="https://cdn.bootcss.com/jszip/3.1.5/jszip.min.js"></script>
+<script src="https://cdn.bootcss.com/FileSaver.js/2014-11-29/FileSaver.min.js"></script>
+
+<script src="https://cdn.bootcss.com/rasterizehtml/1.2.4/rasterizeHTML.min.js"></script>
+
+<script src="https://cdn.bootcss.com/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
+
 <script src='{% static "js/geoinfo.pack.js?t=" %}{{ js_stamp.geoinfo_pack_js }}'></script>
+
 
 <script type="text/javascript">
 
@@ -62,14 +71,47 @@
                 }
                this.is_fullscreen = !this.is_fullscreen
 
+            },
+            auto_shot:function(){
+                var opts = {useCORS: true};
+                html2canvas($('#container')[0],opts).then(function(canvas) {
+                    document.body.appendChild(canvas);
+                });
+
+//                document.body.appendChild($('.amap-vectors'));
+
+//                var canvas = document.body //document.getElementById("canvas");
+//                rasterizeHTML.drawHTML('Some ' +
+//                        '<span style="color: green; font-size: 20px;">HTML</span>' +
+//                        ' with an image <img src="someimg.png">',
+//                        canvas);
+
+//                shot(document.body,function(img){
+//                    var zip = new JSZip();
+//                    zip.file("smile.jpg", img.src.slice(23), {base64: true})
+//                    zip.generateAsync({type:"blob"})
+//                            .then(function(content){
+//                                saveAs(content, "example.zip");
+//                            })
+//
+//                })
+
+
             }
         }
 
-
     }
+
+    function convertCanvasToImage(canvas) {
+        var image = new Image();
+        image.src = canvas.toDataURL("image/png");
+        return image;
+    }
+
     $(function () {
         table=new Vue(table_logic)
     })
+
 
 </script>
 
@@ -105,14 +147,13 @@
             <com-map ref="map_panel"></com-map>
             <div style="position: absolute;right: 2em;top:2em;">
                 <button @click="toggle_fullscreen()" type="button" class="btn btn-primary">全屏切换</button>
+                <button @click="auto_shot()" type="button" class="btn btn-primary">导出截屏</button>
             </div>
 
         </div>
         <com-dispatch-panel class="map-btn-panel" :rows="rows" ref="disp_panel"></com-dispatch-panel>
 
     </div>
-
-
 
 </div>
 
