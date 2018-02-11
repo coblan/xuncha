@@ -10,6 +10,8 @@ from django.contrib.gis.geos import Polygon
 import json
 from .polygon import dict2poly,poly2dict
 from helpers.director.container import evalue_container
+from helpers.base.ldatetime import localstr
+
 class BlockPolygonTablePage(TablePage):
     class BlockPolygonTable(ModelTable):
         model=BlockPolygon
@@ -152,7 +154,7 @@ class BlockGroupDispatchPage(TablePage):
                 'blocks':block_list,
                 'old_selected':old_selected,
                 'last':inst.dispatched.last,
-                'last_time':inst.dispatched.last_time.strftime('%Y-%m-%d %H:%M:%S')
+                'last_time':localstr( inst.dispatched.last_time)
             }
             return dc
                 

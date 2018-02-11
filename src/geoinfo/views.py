@@ -10,6 +10,7 @@ import json
 from helpers.director.decorator import warn_free
 from helpers.director.db_tools import to_dict
 from django.utils.timezone import datetime
+from helpers.base.ldatetime import localstr
 # Create your views here.
 
 @warn_free
@@ -41,7 +42,7 @@ def print_page(request):
             lit_region = BlockPolygon.objects.get(pk =  region.dispatched.last)
             dc = to_dict(lit_region,exclude=['bounding'])
             dc['belong'] = region.name
-            dc['last_time']=region.dispatched.last_time.strftime('%Y-%m-%d %H:%M:%S')
+            dc['last_time']= localstr(region.dispatched.last_time)
             regions.append(dc)
  
     return render(request,'geoinfo/print_page.html',context={'regions':regions})
