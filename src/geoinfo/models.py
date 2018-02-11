@@ -13,6 +13,7 @@ class BlockPolygon(models.Model):
     desp=models.TextField(verbose_name='描述',blank=True)
     # display=models.PolygonField(verbose_name='显示多边形',null=True,blank=True)
     bounding=models.PolygonField(verbose_name='探测多边形',null=True,blank=True)
+    shot = models.CharField('截图',max_length=500,blank=True)
     
     def __unicode__(self):
         return self.name
@@ -25,6 +26,9 @@ class BlockGroup(models.Model):
         super(self.__class__,self).__init__(*args,**kw)
         if self.pk and not hasattr(self,'dispatched'):
             Dispatched.objects.create(group=self)
+    
+    def __unicode__(self):
+        return self.name
 
 class Dispatched(models.Model):
     # blocks=models.ManyToManyField(BlockPolygon,verbose_name='包含区域',blank=True)

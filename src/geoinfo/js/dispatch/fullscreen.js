@@ -5,6 +5,7 @@ export function fullscreen(){
     $('.breadcrumb').hide()
     $('#footer').hide()
     $('.btn-panel').hide()
+    $('.tabs-bar').hide()
 }
 function exit_fullscreen(){
     $('#menu').show()
@@ -13,6 +14,7 @@ function exit_fullscreen(){
     $('.breadcrumb').show()
     $('#footer').show()
     $('.btn-panel').show()
+    $('.tabs-bar').show()
 
 }
 

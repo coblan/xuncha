@@ -646,10 +646,10 @@ var com_file_uploader = exports.com_file_uploader = {
                     );
                 }
             };
-            if (!this.config.hasOwnProperty('multiple') || this.config.multiple) {
-                def_config.com_btn = 'file-uploader-btn-plus';
-            }
             if (this.config) {
+                if (!this.config.hasOwnProperty('multiple') || this.config.multiple) {
+                    def_config.com_btn = 'file-uploader-btn-plus';
+                }
                 ex.assign(def_config, this.config);
             }
 
@@ -702,7 +702,7 @@ var com_file_uploader = exports.com_file_uploader = {
         set_value: function set_value(value) {
             //@value: [url1,url2]
             var val = value.join(';');
-            self.$emit('input', val);
+            this.$emit('input', val);
         },
         add_value: function add_value(value) {
             var self = this;
@@ -1605,7 +1605,7 @@ exports = module.exports = __webpack_require__(0)();
 
 
 // module
-exports.push([module.i, ".tabs {\n  align-items: center; }\n\n.tabs li:first-child {\n  margin-left: 15px; }\n\n.tabs li {\n  display: inline-block;\n  margin-left: 5px;\n  vertical-align: bottom; }\n\n.nav.tabs > li > a {\n  padding: 8px 18px 5px 18px;\n  background-color: #f6f7f8;\n  border: 1px solid #dddddd;\n  border-bottom: none;\n  position: relative;\n  margin-bottom: 1px;\n  font-weight: 400; }\n\n.nav li > a:hover {\n  text-underline: blue;\n  text-decoration: underline; }\n\n.nav li.active > a:after {\n  content: ' ';\n  position: absolute;\n  width: 100%;\n  height: 4px;\n  bottom: -4px;\n  left: 0;\n  background-color: #eee; }\n\n.nav li.active a {\n  text-decoration: none;\n  background-color: #eeeeee;\n  font-weight: 500; }\n\n.nav li.active a:hover {\n  border-bottom: none;\n  text-decoration: none;\n  color: #a2a2a2;\n  font-weight: 500;\n  background-color: #eeeeee; }\n", ""]);
+exports.push([module.i, ".scss-comment {\n  content: 'director/scss/tab_group.scss'; }\n\n.nav.tabs {\n  align-items: center; }\n  .nav.tabs li {\n    display: inline-block;\n    margin-left: 5px;\n    vertical-align: bottom; }\n    .nav.tabs li:first-child {\n      margin-left: 15px; }\n    .nav.tabs li > a {\n      padding: 8px 18px 5px 18px;\n      background-color: #f6f7f8;\n      border: 1px solid #dddddd;\n      border-bottom: none;\n      position: relative;\n      margin-bottom: 1px;\n      font-weight: 400; }\n      .nav.tabs li > a:hover {\n        text-underline: blue;\n        text-decoration: underline; }\n  .nav.tabs li.active > a:after {\n    content: ' ';\n    position: absolute;\n    width: 100%;\n    height: 4px;\n    bottom: -4px;\n    left: 0;\n    background-color: #eee; }\n  .nav.tabs li.active a {\n    text-decoration: none;\n    background-color: #eeeeee;\n    font-weight: 500; }\n  .nav.tabs li.active a:hover {\n    border-bottom: none;\n    text-decoration: none;\n    color: #a2a2a2;\n    font-weight: 500;\n    background-color: #eeeeee; }\n", ""]);
 
 // exports
 

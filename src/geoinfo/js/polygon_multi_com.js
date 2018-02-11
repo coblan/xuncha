@@ -96,8 +96,12 @@ export var polygon_multi_btn_panel={
     },
     template:`<div style="float: right;">
                  <ul class="nav nav-tabs" style="margin-bottom:1em; ">
-                  <li role="presentation" :class="{'active':crt_view=='btn-panel'}" @click="crt_view='btn-panel'"><a href="#">编辑面板</a></li>
-                  <li role="presentation" :class="{'active':crt_view=='list'}" @click="crt_view='list'"><a href="#">分区列表</a></li>
+                  <li role="presentation" :class="{'active':crt_view=='btn-panel'}" @click="crt_view='btn-panel'">
+                    <a href="#">编辑面板</a>
+                    </li>
+                  <li role="presentation" :class="{'active':crt_view=='list'}" @click="crt_view='list'">
+                    <a href="#">分区列表</a>
+                  </li>
 
                 </ul>
                 <div v-show="crt_view=='list'">
@@ -117,17 +121,26 @@ export var polygon_multi_btn_panel={
                     <button v-show="!editing && !is_empty(crt_row)" @click="del(crt_row)">删除</button>
                     <div class="hr"></div>
                     <div>
-                        <div>
-                            <label for="">名字</label>
+                        <div class="panel-field">
+                            <label for="">名字:</label><br/>
                             <span v-if="!editing" v-text="crt_row.name"></span>
                             <input v-else type="text" v-model="crt_row.name"/>
                         </div>
-                        <div>
-                             <label for="">描述</label>
+                        <div class="panel-field">
+                             <label for="">描述:</label><br/>
                              <span v-if="!editing" v-text="crt_row.desp"></span>
                             <textarea v-else  rows="10" v-model="crt_row.desp"></textarea>
                         </div>
-                        <button v-show="editing" @click="edit_poly()">编辑分区</button>
+                        <div class="panel-field" v-if="editing">
+                            <label  for="">区域:</label><br/>
+                            <button v-show="editing" @click="edit_poly()">编辑分区</button>
+                        </div>
+
+                        <div class="panel-field">
+                            <label for="">截图:</label><br/>
+                             <img  v-if="!editing" :src="crt_row.shot">
+                              <com-file-uploader v-else v-model="crt_row.shot" :config="{multiple:false}"></com-file-uploader>
+                        </div>
                     <!--<button v-show="editing" @click="close_poly()">关闭编辑</button>-->
                     </div>
 

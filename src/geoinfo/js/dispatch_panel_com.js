@@ -5,7 +5,7 @@ export  var dispatch_panel={
     <button @click="submit()">确定</button>
     <!--<button @click="highlight_last_selected()">上次生效区域</button>-->
 
-    <button @click="fit_view()">Fit View</button>
+    <button @click="open_print()">打印页</button>
     <div class="hr"></div>
     <div v-for="row in rows">
         <label :for="row.pk" v-text="row.name"></label>
@@ -81,6 +81,9 @@ export  var dispatch_panel={
         },
         fit_view:function(){
             this.map_panel.map.setFitView();
+        },
+        open_print:function(){
+            window.open("/print");
         },
         add_row_polygons:function(row){
             var self=this

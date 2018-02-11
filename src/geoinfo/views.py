@@ -8,6 +8,8 @@ from django.utils.timezone import datetime
 from .dispatch import dispatch
 import json
 from helpers.director.decorator import warn_free
+from helpers.director.db_tools import to_dict
+from django.utils.timezone import datetime
 # Create your views here.
 
 @warn_free
@@ -31,3 +33,15 @@ def forecast(request):
         out.append({'polygon': poly2dict(block.bounding)})
         seed+='z'
     return out
+
+def print_page(request):
+    regions = []
+    for region in BlockGroup.objects.all():
+        if region.dispatched:
+            lit_region = BlockPolygon.objects.get(pk =  region.dispatched.last)
+            dc = to_dict(lit_region,exclude=['bounding'])
+            dc['belong'] = region.name
+            dc['last_time']=region.dispatched.last_time.strftime('%Y-%m-%d %H:%M:%S')
+            regions.append(dc)
+ 
+    return render(request,'geoinfo/print_page.html',context={'regions':regions})

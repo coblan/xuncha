@@ -61,7 +61,15 @@
                     return 'javascript:;'
                 }
             },
+            toggle_fullscreen:function(){
+                if(this.is_fullscreen){
+                    exit_fullscreen()
+                }else{
+                    fullscreen()
+                }
+                this.is_fullscreen = !this.is_fullscreen
 
+            },
 
         }
     }
@@ -86,7 +94,7 @@
 
     </path-nav>
 
-    <div class="flex">
+    <div class="flex tabs-bar">
         <ul class="nav nav-tabs tabs flex-grow">
             <li v-for="tab in tabs" :class="{'active':crt_tab==tab.name}"><a :href="item_link(tab.name)" v-text="tab.label" ></a></li>
         </ul>
@@ -102,6 +110,10 @@
     <div class="flex flex-grow" >
         <div class="flex-grow" style="position: relative;">
             <div id="container"></div>
+
+            <div style="position: absolute;right: 2em;top:2em;">
+                <button @click="toggle_fullscreen()" type="button" class="btn btn-primary">全屏切换</button>
+            </div>
         </div>
 
         <polygon-multi-btn-panel class="map-btn-panel" :crt_row="controller.crt_row" :items="controller.items" @new_row="controller.new_row()"></polygon-multi-btn-panel>
@@ -149,7 +161,7 @@
                     map: map,
                     path: arr,
                     strokeOpacity: 1,
-                    fillOpacity: 0.35,
+                    fillOpacity: 0.1,
                     strokeWeight:1,
                     strokeColor: "#000000",
                     fillColor: "#f5deb3",
@@ -187,57 +199,5 @@
 </script>
 
 
-
-
-
-<style type="text/css">
-    .tabs{
-        align-items: center;
-    }
-    .tabs li:first-child{
-        margin-left: 15px;
-    }
-    .tabs li{
-        display: inline-block;
-        margin-left:5px;
-        vertical-align: bottom;
-    }
-
-    .nav.tabs>li>a{
-        padding: 8px 18px 5px 18px;
-        background-color: #f6f7f8;
-        border: 1px solid #dddddd;
-        border-bottom: none;
-        position: relative;
-        margin-bottom: 1px;
-        font-weight: 400;
-    }
-    .nav li>a:hover{
-        text-underline: blue;
-        text-decoration: underline;
-    }
-
-    .nav li.active>a:after{
-        content: ' ';
-        position: absolute;
-        width: 100%;
-        height: 4px;
-        bottom: -4px;
-        left: 0;
-        background-color: #eee;
-    }
-    .nav li.active a{
-        text-decoration: none;
-        background-color: #eeeeee;
-        font-weight: 500;
-    }
-    .nav li.active a:hover{
-        border-bottom: none;
-        text-decoration: none;
-        color: #a2a2a2;
-        font-weight: 500;
-        background-color: #eeeeee;
-    }
-</style>
 
 {% endblock %}

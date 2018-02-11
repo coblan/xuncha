@@ -1,3 +1,4 @@
+# encoding:utf-8
 """zhaoxiang URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -13,6 +14,7 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+from __future__ import unicode_literals
 from django.conf.urls import url,include
 from django.contrib import admin
 
@@ -39,7 +41,8 @@ urlpatterns = [
     
     url(r'^$',RedirectView.as_view(url='/pc/geoinfo.dispatch')),
     
-    url(r'^forcast/?$','geoinfo.views.forecast')
+    url(r'^forcast/?$','geoinfo.views.forecast'), # 预测接口
+    url(r'^print/?$','geoinfo.views.print_page'),# 打印页面
 ]
 
 

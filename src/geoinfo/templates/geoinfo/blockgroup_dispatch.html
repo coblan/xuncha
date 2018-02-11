@@ -5,12 +5,12 @@
 {% block page_content %}
 <script src='{% static "js/table.pack.js?t=" %}{{ js_stamp.table_pack_js }}'></script>
 
-<script src="https://cdn.bootcss.com/jszip/3.1.5/jszip.min.js"></script>
-<script src="https://cdn.bootcss.com/FileSaver.js/2014-11-29/FileSaver.min.js"></script>
+<!--<script src="https://cdn.bootcss.com/jszip/3.1.5/jszip.min.js"></script>-->
+<!--<script src="https://cdn.bootcss.com/FileSaver.js/2014-11-29/FileSaver.min.js"></script>-->
 
-<script src="https://cdn.bootcss.com/rasterizehtml/1.2.4/rasterizeHTML.min.js"></script>
+<!--<script src="https://cdn.bootcss.com/rasterizehtml/1.2.4/rasterizeHTML.min.js"></script>-->
 
-<script src="https://cdn.bootcss.com/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
+<!--<script src="https://cdn.bootcss.com/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>-->
 
 <script src='{% static "js/geoinfo.pack.js?t=" %}{{ js_stamp.geoinfo_pack_js }}'></script>
 
@@ -72,11 +72,15 @@
                this.is_fullscreen = !this.is_fullscreen
 
             },
+            fit_view:function(){
+                this.$refs.map_panel.map.setFitView();
+            },
             auto_shot:function(){
-                var opts = {useCORS: true};
-                html2canvas($('#container')[0],opts).then(function(canvas) {
-                    document.body.appendChild(canvas);
-                });
+                // 截屏方式换了，不用这个函数了。
+//                var opts = {useCORS: true};
+//                html2canvas($('#container')[0],opts).then(function(canvas) {
+//                    document.body.appendChild(canvas);
+//                });
 
 //                document.body.appendChild($('.amap-vectors'));
 
@@ -147,7 +151,7 @@
             <com-map ref="map_panel"></com-map>
             <div style="position: absolute;right: 2em;top:2em;">
                 <button @click="toggle_fullscreen()" type="button" class="btn btn-primary">全屏切换</button>
-                <button @click="auto_shot()" type="button" class="btn btn-primary">导出截屏</button>
+                <button @click="fit_view()" type="button" class="btn btn-primary">Fit View</button>
             </div>
 
         </div>

@@ -84,9 +84,11 @@ var _fullscreen = __webpack_require__(5);
 
 var dispatch = _interopRequireWildcard(_fullscreen);
 
+var _shot = __webpack_require__(6);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
-__webpack_require__(6);
+__webpack_require__(7);
 
 Vue.component('polygon-input', polygon_com.ploygon_editor);
 Vue.component('polygon-multi-btn-panel', _polygon_multi_com.polygon_multi_btn_panel);
@@ -280,7 +282,7 @@ var polygon_multi_btn_panel = exports.polygon_multi_btn_panel = {
             crt_view: 'btn-panel'
         };
     },
-    template: '<div style="float: right;">\n                 <ul class="nav nav-tabs" style="margin-bottom:1em; ">\n                  <li role="presentation" :class="{\'active\':crt_view==\'btn-panel\'}" @click="crt_view=\'btn-panel\'"><a href="#">\u7F16\u8F91\u9762\u677F</a></li>\n                  <li role="presentation" :class="{\'active\':crt_view==\'list\'}" @click="crt_view=\'list\'"><a href="#">\u5206\u533A\u5217\u8868</a></li>\n\n                </ul>\n                <div v-show="crt_view==\'list\'">\n                    <ul>\n                        <li v-for="item in items"><a @click="set_crt_row(item)" href="#" v-text="item.name"></a></li>\n                    </ul>\n                </div>\n                <div v-show="crt_view==\'btn-panel\'">\n                    <button v-show="!editing" @click="new_row()">\u65B0\u5EFA</button>\n\n                     <button v-show="!editing && !is_empty(crt_row)" @click="start_edit()">\u7F16\u8F91</button>\n                    <button v-show="editing" @click="save()">\u4FDD\u5B58</button>\n                    <button v-show="editing" @click="fallback()">\u53D6\u6D88</button>\n\n\n                    <!--<button v-show="!editing && !is_empty(crt_row)" @click="remove()">\u79FB\u9664</button>-->\n                    <button v-show="!editing && !is_empty(crt_row)" @click="del(crt_row)">\u5220\u9664</button>\n                    <div class="hr"></div>\n                    <div>\n                        <div>\n                            <label for="">\u540D\u5B57</label>\n                            <span v-if="!editing" v-text="crt_row.name"></span>\n                            <input v-else type="text" v-model="crt_row.name"/>\n                        </div>\n                        <div>\n                             <label for="">\u63CF\u8FF0</label>\n                             <span v-if="!editing" v-text="crt_row.desp"></span>\n                            <textarea v-else  rows="10" v-model="crt_row.desp"></textarea>\n                        </div>\n                        <button v-show="editing" @click="edit_poly()">\u7F16\u8F91\u5206\u533A</button>\n                    <!--<button v-show="editing" @click="close_poly()">\u5173\u95ED\u7F16\u8F91</button>-->\n                    </div>\n\n                </div>\n\n     </div>',
+    template: '<div style="float: right;">\n                 <ul class="nav nav-tabs" style="margin-bottom:1em; ">\n                  <li role="presentation" :class="{\'active\':crt_view==\'btn-panel\'}" @click="crt_view=\'btn-panel\'">\n                    <a href="#">\u7F16\u8F91\u9762\u677F</a>\n                    </li>\n                  <li role="presentation" :class="{\'active\':crt_view==\'list\'}" @click="crt_view=\'list\'">\n                    <a href="#">\u5206\u533A\u5217\u8868</a>\n                  </li>\n\n                </ul>\n                <div v-show="crt_view==\'list\'">\n                    <ul>\n                        <li v-for="item in items"><a @click="set_crt_row(item)" href="#" v-text="item.name"></a></li>\n                    </ul>\n                </div>\n                <div v-show="crt_view==\'btn-panel\'">\n                    <button v-show="!editing" @click="new_row()">\u65B0\u5EFA</button>\n\n                     <button v-show="!editing && !is_empty(crt_row)" @click="start_edit()">\u7F16\u8F91</button>\n                    <button v-show="editing" @click="save()">\u4FDD\u5B58</button>\n                    <button v-show="editing" @click="fallback()">\u53D6\u6D88</button>\n\n\n                    <!--<button v-show="!editing && !is_empty(crt_row)" @click="remove()">\u79FB\u9664</button>-->\n                    <button v-show="!editing && !is_empty(crt_row)" @click="del(crt_row)">\u5220\u9664</button>\n                    <div class="hr"></div>\n                    <div>\n                        <div class="panel-field">\n                            <label for="">\u540D\u5B57:</label><br/>\n                            <span v-if="!editing" v-text="crt_row.name"></span>\n                            <input v-else type="text" v-model="crt_row.name"/>\n                        </div>\n                        <div class="panel-field">\n                             <label for="">\u63CF\u8FF0:</label><br/>\n                             <span v-if="!editing" v-text="crt_row.desp"></span>\n                            <textarea v-else  rows="10" v-model="crt_row.desp"></textarea>\n                        </div>\n                        <div class="panel-field" v-if="editing">\n                            <label  for="">\u533A\u57DF:</label><br/>\n                            <button v-show="editing" @click="edit_poly()">\u7F16\u8F91\u5206\u533A</button>\n                        </div>\n\n                        <div class="panel-field">\n                            <label for="">\u622A\u56FE:</label><br/>\n                             <img  v-if="!editing" :src="crt_row.shot">\n                              <com-file-uploader v-else v-model="crt_row.shot" :config="{multiple:false}"></com-file-uploader>\n                        </div>\n                    <!--<button v-show="editing" @click="close_poly()">\u5173\u95ED\u7F16\u8F91</button>-->\n                    </div>\n\n                </div>\n\n     </div>',
 
     mounted: function mounted() {
         var self = this;
@@ -464,7 +466,7 @@ var map_com = exports.map_com = {
                 map: this.map,
                 path: arr,
                 strokeOpacity: 1,
-                fillOpacity: 0.2,
+                fillOpacity: 0.1,
                 strokeWeight: 1,
                 strokeColor: "#000000",
                 fillColor: "#f5deb3"
@@ -488,7 +490,7 @@ var map_com = exports.map_com = {
             poly.setOptions({
                 fillColor: color,
                 strokeWeight: 3,
-                strokeColor: "#0000ff"
+                strokeColor: "#000088"
             });
         },
         remove_highlight_polygon: function remove_highlight_polygon(poly, color) {
@@ -515,7 +517,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 var dispatch_panel = exports.dispatch_panel = {
     props: ['rows'],
-    template: '<div>\n    <button @click="dispatch()">\u751F\u6210</button>\n    <button @click="submit()">\u786E\u5B9A</button>\n    <!--<button @click="highlight_last_selected()">\u4E0A\u6B21\u751F\u6548\u533A\u57DF</button>-->\n    <button @click="fit_view()">Fit View</button>\n    <div class="hr"></div>\n    <div v-for="row in rows">\n        <label :for="row.pk" v-text="row.name"></label>\n        <input :id=\'row.pk\' type="checkbox" :value="row" v-model="checked"/>\n    </div>\n\n    </div>',
+    template: '<div>\n    <button @click="dispatch()">\u751F\u6210</button>\n    <button @click="submit()">\u786E\u5B9A</button>\n    <!--<button @click="highlight_last_selected()">\u4E0A\u6B21\u751F\u6548\u533A\u57DF</button>-->\n\n    <button @click="open_print()">\u6253\u5370\u9875</button>\n    <div class="hr"></div>\n    <div v-for="row in rows">\n        <label :for="row.pk" v-text="row.name"></label>\n        <input :id=\'row.pk\' type="checkbox" :value="row" v-model="checked"/>\n    </div>\n\n    </div>',
     data: function data() {
         //var date = new Date()
         //var date_str = date.toISOString()
@@ -578,6 +580,9 @@ var dispatch_panel = exports.dispatch_panel = {
         },
         fit_view: function fit_view() {
             this.map_panel.map.setFitView();
+        },
+        open_print: function open_print() {
+            window.open("/print");
         },
         add_row_polygons: function add_row_polygons(row) {
             var self = this;
@@ -660,6 +665,7 @@ function fullscreen() {
     $('.breadcrumb').hide();
     $('#footer').hide();
     $('.btn-panel').hide();
+    $('.tabs-bar').hide();
 }
 function exit_fullscreen() {
     $('#menu').show();
@@ -668,6 +674,7 @@ function exit_fullscreen() {
     $('.breadcrumb').show();
     $('#footer').show();
     $('.btn-panel').show();
+    $('.tabs-bar').show();
 }
 
 window.fullscreen = fullscreen;
@@ -677,13 +684,71 @@ window.exit_fullscreen = exit_fullscreen;
 /* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.shot = shot;
+ex.load_js('/static/lib/canvas2image.js');
+
+function shot(ele, callback) {
+
+    //var cntElem = $('#j-sec-end')[0];
+
+    var shareContent = ele; // cntElem;//需要截图的包裹的（原生的）DOM 对象
+    var width = shareContent.offsetWidth; //获取dom 宽度
+    var height = shareContent.offsetHeight; //获取dom 高度
+    var canvas = document.createElement("canvas"); //创建一个canvas节点
+    var scale = 2; //定义任意放大倍数 支持小数
+    canvas.width = width * scale; //定义canvas 宽度 * 缩放
+    canvas.height = height * scale; //定义canvas高度 *缩放
+    canvas.getContext("2d").scale(scale, scale); //获取context,设置scale
+    var opts = {
+        scale: scale, // 添加的scale 参数
+        canvas: canvas, //自定义 canvas
+        // logging: true, //日志开关，便于查看html2canvas的内部执行流程
+        width: width, //dom 原始宽度
+        height: height,
+        useCORS: true // 【重要】开启跨域配置
+    };
+
+    html2canvas(shareContent, opts).then(function (canvas) {
+
+        var context = canvas.getContext('2d');
+        // 【重要】关闭抗锯齿
+        context.mozImageSmoothingEnabled = false;
+        context.webkitImageSmoothingEnabled = false;
+        context.msImageSmoothingEnabled = false;
+        context.imageSmoothingEnabled = false;
+
+        // 【重要】默认转化的格式为png,也可设置为其他格式
+        var img = Canvas2Image.convertToJPEG(canvas, canvas.width, canvas.height);
+
+        //document.body.appendChild(img);
+        //
+        //$(img).css({
+        //    "width": canvas.width / 2 + "px",
+        //    "height": canvas.height / 2 + "px",
+        //}).addClass('f-full');
+        callback(img);
+    });
+}
+
+window.shot = shot;
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(7);
+var content = __webpack_require__(8);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // add the styles to the DOM
-var update = __webpack_require__(9)(content, {});
+var update = __webpack_require__(10)(content, {});
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -700,21 +765,21 @@ if(false) {
 }
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(8)();
+exports = module.exports = __webpack_require__(9)();
 // imports
 
 
 // module
-exports.push([module.i, ".map-btn-panel {\n  width: 15em;\n  margin: 0.5em;\n  background: #ffffff;\n  padding: 0.5em;\n  border: 1px solid #c8c8c8;\n  border-radius: 0.3em; }\n  .map-btn-panel .hr {\n    border: 1px solid #dcdcdc;\n    height: 1px;\n    margin: 0.5em 0; }\n", ""]);
+exports.push([module.i, ".map-btn-panel {\n  width: 20em;\n  margin: 0.5em;\n  background: #ffffff;\n  padding: 0.5em;\n  border: 1px solid #c8c8c8;\n  border-radius: 0.3em; }\n  .map-btn-panel .hr {\n    border: 1px solid #dcdcdc;\n    height: 1px;\n    margin: 0.5em 0; }\n  .map-btn-panel img {\n    max-width: 15em !important; }\n  .map-btn-panel .sortable {\n    padding: 0; }\n  .map-btn-panel textarea {\n    width: 100%; }\n  .map-btn-panel .panel-field {\n    border-bottom: 1px solid #cacaca;\n    padding: 1em 0; }\n", ""]);
 
 // exports
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports) {
 
 /*
@@ -770,7 +835,7 @@ module.exports = function() {
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports) {
 
 /*

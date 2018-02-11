@@ -6,7 +6,8 @@ from helpers.director.engine import BaseEngine,page,fa,page_dc
 from helpers.maintenance.update_static_timestamp import js_stamp
 
 class PcMenu(BaseEngine):
-    url_name='zhaoxiang'
+    url_name='xucha'
+    brand='巡查派遣'
     menu=[
         {'label':'指派巡查区域','url':page('geoinfo.dispatch'),'icon':fa('fa-map-o')},
         # {'label':'GIS区域','url':page('geoinfo.blockpolygon'),'icon':fa('fa-map-o')},
