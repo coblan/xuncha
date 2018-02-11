@@ -254,13 +254,13 @@ var PolygonGroupController = exports.PolygonGroupController = function () {
                 this.crt_row.poly.setOptions({
                     strokeWeight: 1,
                     strokeColor: "#000000",
-                    fillColor: "#f5deb3"
+                    fillColor: "#999"
                 });
             }
             this.crt_row = polygon_row;
             if (this.crt_row.poly) {
                 this.crt_row.poly.setOptions({
-                    fillColor: 'red',
+                    fillColor: '#FFF',
                     strokeWeight: 3,
                     strokeColor: "#0000ff"
                 });
@@ -467,10 +467,10 @@ var map_com = exports.map_com = {
                 map: this.map,
                 path: arr,
                 strokeOpacity: 1,
-                fillOpacity: 0.1,
+                fillOpacity: 0.2,
                 strokeWeight: 1,
                 strokeColor: "#555",
-                fillColor: "#f5deb3"
+                fillColor: "#777"
             });
             this.ploygons.push(_polygon);
             _polygon.on('click', function () {
@@ -489,9 +489,9 @@ var map_com = exports.map_com = {
         highlight_polygon: function highlight_polygon(poly, color) {
             color = color || 'red';
             poly.setOptions({
-                fillColor: color,
+                //fillColor:color,
                 strokeWeight: 3,
-                strokeColor: "#000088"
+                strokeColor: "red"
             });
         },
         remove_highlight_polygon: function remove_highlight_polygon(poly, color) {
@@ -518,7 +518,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 var dispatch_panel = exports.dispatch_panel = {
     props: ['rows'],
-    template: '<div>\n    <button @click="dispatch()">\u751F\u6210</button>\n    <button @click="submit()">\u786E\u5B9A</button>\n    <!--<button @click="highlight_last_selected()">\u4E0A\u6B21\u751F\u6548\u533A\u57DF</button>-->\n\n    <button @click="open_print()">\u6253\u5370\u9875</button>\n    <div class="hr"></div>\n    <div v-for="row in rows">\n        <label :for="row.pk" v-text="row.name"></label>\n        <input :id=\'row.pk\' type="checkbox" :value="row" v-model="checked"/>\n    </div>\n\n    </div>',
+    template: '<div>\n    <button @click="dispatch()">\u751F\u6210</button>\n    <i class="fa fa-arrow-right"></i>\n    <button @click="submit()">\u786E\u5B9A</button>\n    <i class="fa fa-arrow-right"></i>\n    <!--<button @click="highlight_last_selected()">\u4E0A\u6B21\u751F\u6548\u533A\u57DF</button>-->\n\n    <button @click="open_print()">\u6253\u5370\u9875</button>\n\n    <div class="hr"></div>\n    <div>\u4E0A\u6B21\u751F\u6210\u6D3E\u9063\u533A\u57DF\u65F6\u95F4\uFF1A<br/><span v-text="rows[0].last_time"></span></div>\n    <hr/>\n    <div>\n         <label for="_all" >\u6240\u6709</label>\n        <input id=\'_all\' type="checkbox" v-model="sel_all"/>\n    </div>\n    <div v-for="row in rows">\n        <label :for="row.pk" v-text="row.name"></label>\n        <input :id=\'row.pk\' type="checkbox" :value="row" v-model="checked"/>\n    </div>\n    <hr/>\n    <ul>\n        <li>\u6697\u8272\uFF1A\u672C\u8F6E\u5F85\u9009\u533A\u57DF\u3002</li>\n        <li>\u7EA2\u8272\uFF1A\u5F53\u524D\u5DE1\u67E5\u533A\u57DF\u3002</li>\n        <li>\u9EC4\u8272\uFF1A\u672C\u8F6E\u5DF2\u5DE1\u67E5\u8FC7\u7684\u533A\u57DF\u3002</li>\n\n    </ul>\n    </div>',
     data: function data() {
         //var date = new Date()
         //var date_str = date.toISOString()
@@ -526,11 +526,19 @@ var dispatch_panel = exports.dispatch_panel = {
         return {
             checked: [],
             selected_blocks: [],
-            seed: ''
+            seed: '',
+            sel_all: true
         };
     },
     mounted: function mounted() {},
     watch: {
+        sel_all: function sel_all(val) {
+            if (val) {
+                this.checked = this.rows;
+            } else {
+                this.checked = [];
+            }
+        },
         checked: function checked(new_value, old_value) {
             var self = this;
             ex.each(new_value, function (value) {
@@ -629,7 +637,12 @@ var dispatch_panel = exports.dispatch_panel = {
             ex.each(this.rows, function (row) {
                 ex.each(row.blocks, function (block) {
                     if (ex.isin(block.pk, row.old_selected)) {
-                        self.map_panel.remove_highlight_polygon(block.poly, 'yellow');
+                        block.poly.setOptions({
+                            strokeWeight: 1,
+                            strokeColor: "#000000",
+                            fillColor: 'yellow'
+                        });
+                        //self.map_panel.remove_highlight_polygon(block.poly,'yellow')
                     }
                 });
             });
@@ -639,7 +652,12 @@ var dispatch_panel = exports.dispatch_panel = {
             ex.each(this.rows, function (row) {
                 var last_select_block = ex.findone(row.blocks, { pk: row.last });
                 if (last_select_block) {
-                    self.map_panel.remove_highlight_polygon(last_select_block.poly, 'green');
+                    last_select_block.poly.setOptions({
+                        strokeWeight: 1,
+                        strokeColor: "#000000",
+                        fillColor: 'red'
+                    });
+                    //self.map_panel.remove_highlight_polygon(last_select_block.poly,'green')
                 }
             });
         }

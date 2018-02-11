@@ -49,10 +49,10 @@ export var map_com = {
                 map: this.map,
                 path: arr,
                 strokeOpacity: 1,
-                fillOpacity: 0.1,
+                fillOpacity: 0.2,
                 strokeWeight:1,
                 strokeColor: "#555",
-                fillColor: "#f5deb3",
+                fillColor: "#777",
             })
             this.ploygons.push(_polygon)
             _polygon.on('click',function(){
@@ -71,9 +71,9 @@ export var map_com = {
         highlight_polygon:function(poly,color){
             color = color || 'red'
             poly.setOptions({
-                fillColor:color,
+                //fillColor:color,
                 strokeWeight:3,
-                strokeColor: "#000088",
+                strokeColor: "red",
             })
         },
         remove_highlight_polygon:function(poly,color){

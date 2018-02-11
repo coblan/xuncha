@@ -66,13 +66,13 @@ export class PolygonGroupController{
                 this.crt_row.poly.setOptions({
                     strokeWeight:1,
                     strokeColor: "#000000",
-                    fillColor: "#f5deb3",
+                    fillColor: "#999",
                 })
             }
             this.crt_row=polygon_row
             if(this.crt_row.poly ){
                 this.crt_row.poly.setOptions({
-                    fillColor:'red',
+                    fillColor:'#FFF',
                     strokeWeight:3,
                     strokeColor: "#0000ff",
                 })

@@ -152,12 +152,14 @@ class BlockGroupDispatchPage(TablePage):
                 'blocks':block_list,
                 'old_selected':old_selected,
                 'last':inst.dispatched.last,
+                'last_time':inst.dispatched.last_time.strftime('%Y-%m-%d %H:%M:%S')
             }
             return dc
                 
             # return {
                 # 'blocks':[to_dict(x,form=True) for x in inst.blocks.all()]
             # }
+        
     
     tableCls=BlockGroupTable
     template='geoinfo/blockgroup_dispatch.html'    
