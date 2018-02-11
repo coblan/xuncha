@@ -8,7 +8,7 @@ export var map_com = {
         var self=this
 
         ex.load_css("http://cache.amap.com/lbs/static/main1119.css")
-        ex.load_js("http://webapi.amap.com/maps?v=1.3&key=您申请的key值&plugin=AMap.PolyEditor,AMap.CircleEditor,AMap.MouseTool",function(){
+        ex.load_js("http://webapi.amap.com/maps?v=1.3&key=0909294a753dfe00a0aa124b6ecb93eb&plugin=AMap.PolyEditor,AMap.CircleEditor,AMap.MouseTool",function(){
             ex.load_js("http://cache.amap.com/lbs/static/addToolbar.js",function(){
                 setTimeout(function(){
                     self.init()
@@ -41,6 +41,7 @@ export var map_com = {
             if(this.on_init_call){
                 this.on_init_call()
             }
+            //this.map.setMapStyle('amap://styles/light');
         },
         insert_polygon:function(arr){
             var self=this
@@ -50,7 +51,7 @@ export var map_com = {
                 strokeOpacity: 1,
                 fillOpacity: 0.1,
                 strokeWeight:1,
-                strokeColor: "#000000",
+                strokeColor: "#555",
                 fillColor: "#f5deb3",
             })
             this.ploygons.push(_polygon)
