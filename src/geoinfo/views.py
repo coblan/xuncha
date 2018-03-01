@@ -46,6 +46,6 @@ def print_page(request):
                 dc['last_time']= localstr(region.dispatched.last_time)
                 regions.append(dc)
             except BlockPolygon.DoesNotExist:
-                pass
+                print('pk = %s not exist.'%region.dispatched.last)
  
     return render(request,'geoinfo/print_page.html',context={'regions':regions})
