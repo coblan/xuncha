@@ -518,7 +518,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 var dispatch_panel = exports.dispatch_panel = {
     props: ['rows'],
-    template: '<div>\n    <button @click="dispatch()">\u751F\u6210</button>\n    <i class="fa fa-arrow-right"></i>\n    <button @click="submit()">\u786E\u5B9A</button>\n    <i class="fa fa-arrow-right"></i>\n    <!--<button @click="highlight_last_selected()">\u4E0A\u6B21\u751F\u6548\u533A\u57DF</button>-->\n\n    <button @click="open_print()">\u6253\u5370\u9875</button>\n\n    <div class="hr"></div>\n    <div>\u4E0A\u6B21\u751F\u6210\u6D3E\u9063\u533A\u57DF\u65F6\u95F4\uFF1A<br/><span v-text="rows[0].last_time"></span></div>\n    <hr/>\n    <div>\n         <label for="_all" >\u6240\u6709</label>\n        <input id=\'_all\' type="checkbox" v-model="sel_all"/>\n    </div>\n    <div v-for="row in rows">\n        <label :for="row.pk" v-text="row.name"></label>\n        <input :id=\'row.pk\' type="checkbox" :value="row" v-model="checked"/>\n    </div>\n    <hr/>\n    <ul>\n        <li>\u6697\u8272\uFF1A\u672C\u8F6E\u5F85\u9009\u533A\u57DF\u3002</li>\n        <li>\u7EA2\u8272\uFF1A\u5F53\u524D\u5DE1\u67E5\u533A\u57DF\u3002</li>\n        <li>\u9EC4\u8272\uFF1A\u672C\u8F6E\u5DF2\u5DE1\u67E5\u8FC7\u7684\u533A\u57DF\u3002</li>\n\n    </ul>\n    </div>',
+    template: '<div style="position: relative;">\n    <button @click="dispatch()">\u751F\u6210</button>\n    <i class="fa fa-arrow-right"></i>\n    <button @click="submit()">\u786E\u5B9A</button>\n    <i class="fa fa-arrow-right"></i>\n    <!--<button @click="highlight_last_selected()">\u4E0A\u6B21\u751F\u6548\u533A\u57DF</button>-->\n\n    <button @click="open_print()">\u6253\u5370\u9875</button>\n\n    <div class="hr"></div>\n    <div style="height: 1.5em;position: absolute;bottom: 0.5em;">\n        <div v-text="msg"></div>\n        <!--<div v-if="checked.length>0">\u9009\u4E2D\u533A\u57DF\u751F\u6210\u65F6\u95F4\uFF1A<br/><span v-text="checked[0].last_time"></span></div>-->\n    </div>\n\n    <hr/>\n    <div>\n        <input id=\'_all\' type="checkbox" v-model="sel_all"/>\n        <label for="_all" >\u6240\u6709</label>\n\n    </div>\n    <div v-for="row in rows">\n        <input :id=\'row.pk\' type="checkbox" :value="row" v-model="checked"/>\n        <label :for="row.pk" v-text="row.name"></label>\n        <span v-text="row.last_time"></span>\n    </div>\n    <hr/>\n    <ul>\n        <li>\u6697\u8272\uFF1A\u672C\u8F6E\u5F85\u9009\u533A\u57DF\u3002</li>\n        <li>\u7EA2\u8272\uFF1A\u5F53\u524D\u5DE1\u67E5\u533A\u57DF\u3002</li>\n        <li>\u9EC4\u8272\uFF1A\u672C\u8F6E\u5DF2\u5DE1\u67E5\u8FC7\u7684\u533A\u57DF\u3002</li>\n\n    </ul>\n    </div>',
     data: function data() {
         //var date = new Date()
         //var date_str = date.toISOString()
@@ -527,7 +527,8 @@ var dispatch_panel = exports.dispatch_panel = {
             checked: [],
             selected_blocks: [],
             seed: '',
-            sel_all: true
+            sel_all: true,
+            msg: ''
         };
     },
     mounted: function mounted() {},
@@ -614,14 +615,22 @@ var dispatch_panel = exports.dispatch_panel = {
         dispatch: function dispatch() {
             var self = this;
             show_upload();
-            var post_data = [{ fun: 'dispatch_block', seed: self.seed }];
+            var region_pk_list = ex.map(this.checked, function (region) {
+                return region.pk;
+            });
+            var post_data = [{ fun: 'dispatch_block', seed: self.seed, regions_pks: region_pk_list }];
             self.seed = self.seed + 'z';
             ex.post('/_ajax/geoinfo', JSON.stringify(post_data), function (resp) {
                 Vue.set(self, 'selected_blocks', resp.dispatch_block);
                 //self.selected_blocks= resp.dispatch_block
 
                 //hide_upload()
-                hide_upload(30 * 1000);
+                var elps = 10 * 1000;
+                hide_upload(elps);
+                self.msg = '正在查询各个系统，是否冲突，请稍等...';
+                setTimeout(function () {
+                    self.msg = "";
+                }, elps);
             });
         },
         submit: function submit() {
