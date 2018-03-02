@@ -38,14 +38,21 @@ def forecast(request):
 def print_page(request):
     regions = []
     for region in BlockGroup.objects.all():
+        dc = {
+            'belong':region.name,
+            'msg':[]
+        }
+        
         if region.dispatched:
+            dc['last_time']= localstr(region.dispatched.last_time)
             try:
                 lit_region = BlockPolygon.objects.get(pk =  region.dispatched.last)
-                dc = to_dict(lit_region,exclude=['bounding'])
-                dc['belong'] = region.name
-                dc['last_time']= localstr(region.dispatched.last_time)
-                regions.append(dc)
+                dc.update( to_dict(lit_region,exclude=['bounding']) )
+                # dc['belong'] = region.name
             except BlockPolygon.DoesNotExist:
                 print('pk = %s not exist.'%region.dispatched.last)
+                dc['msg'].append('派发区域可能被删除了，请确认后，重新生成派发区域!')
+                
+        regions.append(dc)
  
     return render(request,'geoinfo/print_page.html',context={'regions':regions})

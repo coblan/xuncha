@@ -37,12 +37,30 @@
 <div id="there">
     <div class="A4" v-for="region in regions">
         <img v-if="region.shot" :src="region.shot" alt=""/>
-        <span v-else>没有截图，请联系管理员</span>
-        <div>
-            <div v-text="region.desp"></div>
-            <div>生成时间: <span v-text="region.last_time"></span></div>
-            <div>街镇: <span v-text="region.belong"></span></div>
+        <div style="text-align: left">
+            <div v-show="!region.shot || region.msg.length > 0" style="color: red">
+                <b>系统信息</b>
+                <ul>
+                    <li v-if="!region.shot">
+                        <span>没有截图，请联系管理员</span>
+                    </li>
+                    <li v-for="msg in region.msg" v-text="msg"></li>
+                </ul>
+
+            </div>
+
+            <div>
+               <div><b for="">描述:</b>
+                   <ul>
+                       <li v-text="region.desp"></li>
+                   </ul>
+
+               </div>
+                <div><b for="">生成时间:</b> <span v-text="region.last_time"></span></div>
+                <div><b for="">街镇: </b><span v-text="region.belong"></span></div>
+            </div>
         </div>
+
 
     </div>
     <!--<div class="A4">第二页</div>-->

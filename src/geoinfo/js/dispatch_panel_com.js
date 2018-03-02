@@ -1,6 +1,6 @@
 export  var dispatch_panel={
     props:['rows'],
-    template:`<div>
+    template:`<div style="position: relative;">
     <button @click="dispatch()">生成</button>
     <i class="fa fa-arrow-right"></i>
     <button @click="submit()">确定</button>
@@ -10,15 +10,21 @@ export  var dispatch_panel={
     <button @click="open_print()">打印页</button>
 
     <div class="hr"></div>
-    <div>上次生成派遣区域时间：<br/><span v-text="rows[0].last_time"></span></div>
+    <div style="height: 1.5em;position: absolute;bottom: 0.5em;">
+        <div v-text="msg"></div>
+        <!--<div v-if="checked.length>0">选中区域生成时间：<br/><span v-text="checked[0].last_time"></span></div>-->
+    </div>
+
     <hr/>
     <div>
-         <label for="_all" >所有</label>
         <input id='_all' type="checkbox" v-model="sel_all"/>
+        <label for="_all" >所有</label>
+
     </div>
     <div v-for="row in rows">
-        <label :for="row.pk" v-text="row.name"></label>
         <input :id='row.pk' type="checkbox" :value="row" v-model="checked"/>
+        <label :for="row.pk" v-text="row.name"></label>
+        <span v-text="row.last_time"></span>
     </div>
     <hr/>
     <ul>
@@ -37,6 +43,7 @@ export  var dispatch_panel={
             selected_blocks:[],
             seed:'',
             sel_all:true,
+            msg:''
         }
     },
     mounted:function(){
@@ -130,14 +137,23 @@ export  var dispatch_panel={
         dispatch:function(){
             var self=this
             show_upload()
-            var post_data=[{fun:'dispatch_block',seed:self.seed}]
+            var region_pk_list=ex.map(this.checked,function(region){
+                return region.pk
+            })
+            var post_data=[{fun:'dispatch_block',seed:self.seed,regions_pks:region_pk_list}]
             self.seed = self.seed +'z'
             ex.post('/_ajax/geoinfo',JSON.stringify(post_data),function(resp){
                 Vue.set(self,'selected_blocks',resp.dispatch_block)
                 //self.selected_blocks= resp.dispatch_block
 
                 //hide_upload()
-                hide_upload(30*1000)
+                var elps = 10*1000
+                hide_upload(elps)
+                self.msg='正在查询各个系统，是否冲突，请稍等...'
+                setTimeout(function(){
+                    self.msg=""
+                },elps)
+
             })
         },
         submit:function(){

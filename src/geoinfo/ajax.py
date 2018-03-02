@@ -19,9 +19,9 @@ def block_group_items(group_pk):
         ls.append(to_dict(x,filt_attr=dc))
     return ls
     
-def dispatch_block(seed):
+def dispatch_block(seed,regions_pks):
     out=[]
-    for group in BlockGroup.objects.all():
+    for group in BlockGroup.objects.filter(pk__in=regions_pks):
         selected_block_pk=dispatch(group, seed)
         out.append({'group':group.pk,'block':selected_block_pk})
     return out
