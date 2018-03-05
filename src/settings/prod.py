@@ -3,7 +3,7 @@ from base import *
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'zhaoxiang_gis',
+        'NAME': 'xuncha',
         'USER': 'postgres',
         'PASSWORD': '123',
         'HOST': '127.0.0.1', 
