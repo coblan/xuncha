@@ -26,7 +26,11 @@ def _get_can_select(group):
     if not can_select:
         group.dispatched.blocks=[]
         group.dispatched.save()
-        can_select=all_block
+        can_select = all_block
+        
+    # 屏蔽上次的区域，避免出现连续选中同一个区域。
+    if group.dispatched.last:
+        can_select = can_select - {int(group.dispatched.last)}
     return list(can_select)
         
 def _random_select_block(can_select,seed):   
